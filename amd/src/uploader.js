@@ -10,7 +10,9 @@ define(["jquery"], function($) {
                 repositoryKeys = window.Object.keys(filepickerOptions.repositories);
 
             //this might blow up with non ascii ... if so ..
-            var senddata = 'data:text/vtt;base64,' + btoa(filedata);
+           // var senddata = 'data:text/vtt;base64,' + btoa(filedata);
+           var senddata = 'data:text/vtt;base64,' + this.unicodebtoa(filedata);
+
             senddata = this.dataURItoBlob(senddata);
 
             formData.append('repo_upload_file',senddata,filename);
@@ -90,7 +92,7 @@ define(["jquery"], function($) {
         },
 
         //unicode safe btoa ... but does it work???
-        b64EncodeUnicode: function(str) {
+        unicodebtoa: function(str) {
             // first we use encodeURIComponent to get percent-encoded UTF-8,
             // then we convert the percent encodings into raw bytes which
             // can be fed into btoa.

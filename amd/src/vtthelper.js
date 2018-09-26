@@ -42,7 +42,7 @@ define(["jquery"], function($) {
                                     current.part = line;
                                 //if its partyly full, add to it
                                 } else {
-                                    current.part = `${current.part} ${line}`;
+                                    current.part = current.part +  " " +  line;
                                 }
                             }
                         } else {
