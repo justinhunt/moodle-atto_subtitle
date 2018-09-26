@@ -228,9 +228,4 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
         }//end of register events
 }//end of returned object
 
-
-
-   // $('#poodllsubtitle_load').trigger('click');
-
-
 });

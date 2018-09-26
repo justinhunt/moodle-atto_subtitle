@@ -7,7 +7,7 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
       controls: {},
       activeSubtitle: -1,
       ss: null,
-      mediatype: 'video',
+      mediatype: constants.mediatype_video,
 
       init: function(subtitleset,mediatype){
             this.ss = subtitleset;
@@ -21,7 +21,7 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
           this.controls.videoplayer = $(constants.videoplayer);
           this.controls.audioplayer = $(constants.audioplayer);
           this.controls.root = $('#root');
-          if(this.mediatype=='audio'){
+          if(this.mediatype==constants.mediatype_audio){
               this.controls.mediaplayer = this.controls.audioplayer
           }else {
               this.controls.mediaplayer = this.controls.videoplayer
@@ -69,8 +69,8 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
         console.log(ext);
         switch(ext){
             case 'mp3':
-                if(this.mediatype=='video'){
-                    this.mediatype='audio';
+                if(this.mediatype==constants.mediatype_video){
+                    this.mediatype=constants.mediatype_audio;
                     this.controls.mediaplayer.off('timeupdate');
                     this.controls.mediaplayer = this.controls.audioplayer;
                     this.initEvents();
@@ -78,8 +78,8 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
                 this.controls.root.addClass('player-audio');
                 break;
             default:
-                if(this.mediatype=='audio'){
-                    this.mediatype='video';
+                if(this.mediatype==constants.mediatype_audio){
+                    this.mediatype=constants.mediatype_video;
                     this.controls.mediaplayer.off('timeupdate');
                     this.controls.mediaplayer = this.controls.videoplayer;
                     this.initEvents();

@@ -37,7 +37,7 @@ function atto_subtitle_strings_for_js() {
 
     $PAGE->requires->strings_for_js(
         array('insert','cancel','audio','video','subtitle',
-            'subtitleinstructions','audio_desc','video_desc'), constants::M_COMPONENT);
+            'subtitleinstructions','audio_desc','video_desc','uploadprogress','uploadproblem'), constants::M_COMPONENT);
 }
 
 /**

@@ -1,10 +1,12 @@
-define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "atto_subtitle/vtthelper","atto_subtitle/previewhelper"], function($, constants, poodllsubtitle, vtthelper, previewhelper) {
+define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "atto_subtitle/vtthelper","atto_subtitle/previewhelper","atto_subtitle/uploader"], function($, constants, poodllsubtitle, vtthelper, previewhelper, uploader) {
 
     //Video helper is manipulating the video and passing on video events and info to other parts of app
 
   return {
 
       controls: {},
+      mediaurl: false,
+      host: false,
       sampledata: [
         {start: 6254, end: 11758, part: 'Central downtown Los Angeles'},
         {start: 11882, end: 15184, part: 'Rosslyn Hotel 3'},
@@ -66,11 +68,14 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
         {start: 261520, end: 275799, part: 'Los Angeles downtown'}
         ],  
 
-      init: function(selectedURLs){
+      init: function(host, uploadCallback, selectedURLs){
+          this.host = host;
+          this.uploadCallback = uploadCallback;
             this.initControls();
             this.initEvents();
             var mediatype=constants.mediatype_video;
             if(selectedURLs.mediaurl){
+                this.mediaurl = selectedURLs.mediaurl;
                 var ext = selectedURLs.mediaurl.split('.').pop().toLowerCase();
                 if(ext == 'mp3'){
                     mediatype=constants.mediatype_audio;
@@ -114,45 +119,65 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
       },
 
       initEvents: function(){
-         var that = this;
-         this.controls.loadbutton.click(function(){
-             var mediaurl = that.controls.mediaurl.val().trim();
-             var vtturl = that.controls.vtturl.val().trim();
-             that.loadMediaAndVtt(mediaurl,vtturl);
+            var that = this;
+             this.controls.loadbutton.click(function(){
+                 var mediaurl = that.controls.mediaurl.val().trim();
+                 var vtturl = that.controls.vtturl.val().trim();
+                 that.loadMediaAndVtt(mediaurl,vtturl);
 
-        });
+            });
 
-       this.controls.downloadbutton.click(function(){
-           //hacky download script
-           var element = document.createElement('a');
-           var jsondata = poodllsubtitle.fetchSubtitleData();
-           var vttdata = vtthelper.convertJsonToVtt(jsondata);
-           element.setAttribute('href', 'data:text/vtt;charset=utf-8,' + encodeURIComponent(vttdata));
-           element.setAttribute('download', "yoursubtitlefile.vtt");
-           element.style.display = 'none';
-           document.body.appendChild(element);
-           element.click();
-           document.body.removeChild(element);
+           this.controls.downloadbutton.click(function(){
+                that.do_download();
+                return;
+           });
 
-       });
+           this.controls.savebutton.click(function() {
+               that.do_upload();
+               return;
 
-       this.controls.savebutton.click(function() {
-           console.log('Save and download. Currently copies downloadbutton action');
-           var element = document.createElement('a');
-           var jsondata = poodllsubtitle.fetchSubtitleData();
-           var vttdata = vtthelper.convertJsonToVtt(jsondata);
-           element.setAttribute('href', 'data:text/vtt;charset=utf-8,' + encodeURIComponent(vttdata));
-           element.setAttribute('download', "yoursubtitlefile.vtt");
-           element.style.display = 'none';
-           document.body.appendChild(element);
-           element.click();
-           document.body.removeChild(element);
-       });
+           });
 
-       this.controls.cancelallbutton.click(function() {
-           console.log('Cancel all changes. Currently refreshes the page');
-           window.location.reload();
-       });
+           this.controls.cancelallbutton.click(function() {
+               console.log('Cancel all changes. Currently refreshes the page');
+               window.location.reload();
+           });
+      },
+
+      fetch_filename: function(url) {
+          url = url.substring(0, (url.indexOf("#") == -1) ? url.length : url.indexOf("#"));
+          url = url.substring(0, (url.indexOf("?") == -1) ? url.length : url.indexOf("?"));
+          var filename = url.substring(url.lastIndexOf("/") + 1, url.length);
+          return filename;
+      },
+
+      do_download: function(){
+          //hacky download script
+          var element = document.createElement('a');
+          var jsondata = poodllsubtitle.fetchSubtitleData();
+          var vttdata = vtthelper.convertJsonToVtt(jsondata);
+          element.setAttribute('href', 'data:text/vtt;charset=utf-8,' + encodeURIComponent(vttdata));
+          element.setAttribute('download', "yoursubtitlefile.vtt");
+          element.style.display = 'none';
+          document.body.appendChild(element);
+          element.click();
+          document.body.removeChild(element);
+      },
+
+      do_upload: function(){
+
+          //build our filedata
+          var jsondata = poodllsubtitle.fetchSubtitleData();
+          var vttdata = vtthelper.convertJsonToVtt(jsondata);
+          var filedata=vttdata;
+
+          //get our filename
+          if(this.mediaurl){
+              var filename = this.fetch_filename(this.mediaurl) + '.vtt';
+          }else{
+              var filename='subtitles_' + (Math.random() * 1000).toString() + '.vtt';
+          }
+          uploader.upload_to_server(this.host,filedata,filename,this.uploadCallback);
       }
-    }
+  }
 });

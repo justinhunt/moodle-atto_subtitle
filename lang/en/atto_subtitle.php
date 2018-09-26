@@ -47,5 +47,7 @@ $string['subtitle'] = 'Subtitles';
 $string['subtitlecheckbox'] = 'Request subtitles for this recording';
 $string['subtitleinstructions'] = 'Requested subtitles are ready about 5 minutes after recording. You must request before recording.';
 $string['subtitle:visible'] = 'Visible';
+$string['uploadprogress'] = 'Progress';
+$string['uploadproblem'] = 'There was a problem uploading your file. So when you close this message, it will download. Please save it.';
 
 

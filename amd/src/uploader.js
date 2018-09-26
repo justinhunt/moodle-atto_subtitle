@@ -1,59 +1,38 @@
 define(["jquery"], function($) {
     return{
-        // Upload recorded audio/video to server.
-        upload_to_server: function(type, callback) {
-            var xhr = new window.XMLHttpRequest();
+        // Upload VTT file to server
+        upload_to_server: function(host, filedata,filename, callback) {
 
-            // Get src media of audio/video tag.
-            xhr.open('GET', cm.player.get('src'), true);
-            xhr.responseType = 'blob';
 
-            xhr.onload = function() {
-                if (xhr.status === 200) { // If src media was successfully retrieved.
-                    // blob is now the media that the audio/video tag's src pointed to.
-                    var blob = this.response;
+            // Create FormData to send to PHP filepicker-upload script.
+            var formData = new window.FormData(),
+                filepickerOptions = host.get('filepickeroptions').link,
+                repositoryKeys = window.Object.keys(filepickerOptions.repositories);
 
-                    // Generate filename with random ID and file extension.
-                    var fileName = (Math.random() * 1000).toString().replace('.', '');
-                    fileName += (type === 'audio') ? '-audio.ogg'
-                        : '-video.webm';
+            //this might blow up with non ascii ... if so ..
+            var senddata = 'data:text/vtt;base64,' + btoa(filedata);
+            senddata = this.dataURItoBlob(senddata);
 
-                    // Create FormData to send to PHP filepicker-upload script.
-                    var formData = new window.FormData(),
-                        filepickerOptions = cm.editorScope.get('host').get('filepickeroptions').link,
-                        repositoryKeys = window.Object.keys(filepickerOptions.repositories);
+            formData.append('repo_upload_file',senddata,filename);
 
-                    formData.append('repo_upload_file', blob, fileName);
-                    formData.append('itemid', filepickerOptions.itemid);
+            formData.append('itemid', filepickerOptions.itemid);
 
-                    for (var i = 0; i < repositoryKeys.length; i++) {
-                        if (filepickerOptions.repositories[repositoryKeys[i]].type === 'upload') {
-                            formData.append('repo_id', filepickerOptions.repositories[repositoryKeys[i]].id);
-                            break;
-                        }
-                    }
-
-                    formData.append('env', filepickerOptions.env);
-                    formData.append('sesskey', M.cfg.sesskey);
-                    formData.append('client_id', filepickerOptions.client_id);
-                    formData.append('savepath', '/');
-                    formData.append('ctx_id', filepickerOptions.context.id);
-
-                    // Pass FormData to PHP script using XHR.
-                    var uploadEndpoint = M.cfg.wwwroot + '/repository/repository_ajax.php?action=upload';
-                    cm.make_xmlhttprequest(uploadEndpoint, formData,
-                        function(progress, responseText) {
-                            if (progress === 'upload-ended') {
-                                callback('ended', window.JSON.parse(responseText).url);
-                            } else {
-                                callback(progress);
-                            }
-                        }
-                    );
+            for (var i = 0; i < repositoryKeys.length; i++) {
+                if (filepickerOptions.repositories[repositoryKeys[i]].type === 'upload') {
+                    formData.append('repo_id', filepickerOptions.repositories[repositoryKeys[i]].id);
+                    break;
                 }
-            };
+            }
 
-            xhr.send();
+            formData.append('env', filepickerOptions.env);
+            formData.append('sesskey', M.cfg.sesskey);
+            formData.append('client_id', filepickerOptions.client_id);
+            formData.append('savepath', '/');
+            formData.append('ctx_id', filepickerOptions.context.id);
+
+            // Pass FormData to PHP script using XHR.
+            var uploadEndpoint = M.cfg.wwwroot + '/repository/repository_ajax.php?action=upload';
+            this.make_xmlhttprequest(uploadEndpoint, formData,callback);
         },
 
         // Handle XHR sending/receiving/status.
@@ -69,7 +48,7 @@ define(["jquery"], function($) {
             };
 
             xhr.upload.onprogress = function(event) {
-                callback(Math.round(event.loaded / event.total * 100) + "% " + M.util.get_string('uploadprogress', 'atto_recordrtc'));
+                callback(Math.round(event.loaded / event.total * 100) + "% " + M.util.get_string('uploadprogress', 'atto_subtitle'));
             };
 
             xhr.upload.onerror = function(error) {
@@ -83,6 +62,42 @@ define(["jquery"], function($) {
             // POST FormData to PHP script that handles uploading/saving.
             xhr.open('POST', url);
             xhr.send(data);
+        },
+
+        dataURItoBlob: function(dataURI) {
+            // convert base64 to raw binary data held in a string
+            // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+            var byteString = atob(dataURI.split(',')[1]);
+
+            // separate out the mime component
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+            // write the bytes of the string to an ArrayBuffer
+            var ab = new ArrayBuffer(byteString.length);
+
+            // create a view into the buffer
+            var ia = new Uint8Array(ab);
+
+            // set the bytes of the buffer to the correct values
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+
+            // write the ArrayBuffer to a blob, and you're done
+            var blob = new Blob([ab], {type: mimeString});
+            return blob;
+
+        },
+
+        //unicode safe btoa ... but does it work???
+        b64EncodeUnicode: function(str) {
+            // first we use encodeURIComponent to get percent-encoded UTF-8,
+            // then we convert the percent encodings into raw bytes which
+            // can be fed into btoa.
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+                function toSolidBytes(match, p1) {
+                    return String.fromCharCode('0x' + p1);
+                }));
         }
     }
 

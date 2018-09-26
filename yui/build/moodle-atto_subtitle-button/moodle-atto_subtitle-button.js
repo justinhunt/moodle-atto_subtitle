@@ -34,6 +34,7 @@ YUI.add('moodle-atto_subtitle-button', function (Y, NAME) {
  */
 var COMPONENTNAME = 'atto_subtitle';
 var SHORTNAME = 'subtitle';
+var NODE_TYPE = {LINK: 'LINK', MEDIA: 'MEDIA'};
 var MEDIA_TYPES = {LINK: 'LINK', VIDEO: 'VIDEO', AUDIO: 'AUDIO'};
 var CSS = {
         VIDEO: 'atto_subtitle_video',
@@ -51,7 +52,10 @@ var CSS = {
 };
 var STATE ={
     subtitling: false,
-}
+    selectednode: false,
+    selectednodetype: false,
+    mediaurl: false
+};
 
 var TEMPLATES = {
         ROOT: '' +
@@ -175,9 +179,130 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
                     title: 'subtitle',
                     buttonName: SHORTNAME,
                     callback: this._displayDialogue,
-                    callbackArgs: null
+                    callbackArgs: null,
+
+                    // Watch the following tags and add/remove highlighting as appropriate:
+                    tags: 'a,video,audio',
+                    tagMatchRequiresAll: false
                 });
             }
+    },
+
+    /**
+     * Gets the root context for all templates, with extra supplied context.
+     *
+     * @method _getContext
+     * @param  {Object} extra The extra context to add
+     * @return {Object}
+     * @private
+     */
+    _getContext:
+        function(extra) {
+            return Y.merge({
+                elementid: this.get('host').get('elementid'),
+                imgpath: M.cfg.wwwroot + '/lib/editor/atto/plugins/subtitle/pix/e/',
+                component: COMPONENTNAME,
+                helpStrings: this.get('help'),
+                CSS: CSS
+            }, extra);
+        },
+
+
+
+    /**
+     * Display the media editing tool.
+     *
+     * @method _displayDialogue
+     * @private
+     */
+    _displayDialogue: function(e,recorder) {
+
+        //whats this?
+        if (this.get('host').getSelection() === false) {
+            return;
+        }
+
+        //Set size and title
+        var title = M.util.get_string('subtitle', COMPONENTNAME);
+        var width = '1200px';
+
+        var d_conf = {};
+        d_conf.headerContent =title;
+        d_conf.focusAfterHide = SHORTNAME;
+        d_conf.width = width;
+        //d_conf.height=height;
+
+        var dialogue = this.getDialogue(d_conf);
+
+        // Set the dialogue content, and then show the dialogue.
+        dialogue.set('bodyContent', this._getDialogueContent()).show();
+
+        //store some common elements we will refer to later
+        STATE.elementid = this.get('host').get('elementid');
+        var that=this;
+
+        //so finally load those recorders
+        this._loadSubtitleEditor();
+    },
+
+
+    /**
+     * Loads or reloads the recorders
+     *
+     * @method _loadRecorders
+     * @private
+     */
+    _loadSubtitleEditor: function(){
+        var that = this;
+        var host = this.get('host');
+        that.uploaded=false;
+
+        //get our selected URLs (either from media tags or anchor links)
+        var medium = host.getSelectedNodes().filter('video,audio').shift();
+        if(medium){
+            var selectedURLs = this._fetchSelectedURLs_mediatag(medium);
+            STATE.selectednode = medium;
+            STATE.selectednodetype = NODE_TYPE.MEDIA;
+        }else{
+            STATE.selectednodetype = NODE_TYPE.LINK;
+            var selectedURLs = this._fetchSelectedURLs_anchor();
+        }
+        STATE.mediaurl = selectedURLs.mediaurl;
+
+        var uploadcallback = function(eventtype, responseText) {
+
+            if (eventtype === 'upload-ended') {
+                var url = false;
+                var response = window.JSON.parse(responseText);
+                if(response) {
+                    if ('url' in response) {
+                        url = response.url;
+                    }
+                    else if('newfile' in response)
+                    {
+                        url = response.newfile.url;
+                    }
+                }
+
+                //if we got a URL we use it, else we error out
+                if(url){
+                    that._updateAndClose(url);
+                }else{
+                    //ouch that didn't work .. lets download so the user doesn't lose all their work
+                    alert(M.util.get_string('uploadproblem', COMPONENTNAME));
+                    loader.do_download();
+                }
+            } else {
+                //no need to do anything really
+                //console.log(eventtype);
+            }
+        };
+
+
+
+        require(['atto_subtitle/loader'], function(loader) {
+            loader.init(host,uploadcallback,selectedURLs);
+        });
     },
 
     /**
@@ -206,46 +331,6 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         }
         return urls;
     },
-
-    /**
-     * If there is selected text and it is part of an anchor link,
-     * extract the url (and target) from the link (and set them in the form).
-     *
-     * @method _resolveAnchors
-     * @private
-     */
-    _fetchSelectedURLs_anchor: function() {
-
-        // Find the first anchor tag in the selection.
-        var selectednode = this.get('host').getSelectionParentNode();
-        var anchornodes = null;
-        var anchornode = null;
-        var urls = {mediaurl: false, vtturl: false};
-
-
-        // Note this is a document fragment and YUI doesn't like them.
-        if (!selectednode) {
-            return urls;
-        }
-
-        anchornodes = this._findSelectedAnchors(Y.one(selectednode));
-        if (anchornodes.length > 0) {
-            anchornode = anchornodes[0];
-            this._currentSelection = this.get('host').getSelectionFromNode(anchornode);
-            urls.mediaurl = anchornode.getAttribute('href');
-            urls.vtturl = anchornode.getAttribute('data-subtitles');
-
-            if(urls.vtturl=="" && urls.mediaurl!=""){
-                var tempurl = new URL(urls.mediaurl);
-                var urlParams = new URLSearchParams(tempurl.search);
-                if(urlParams) {
-                    urls.vtturl = urlParams.get('data-subtitles');
-                }
-            }
-        }
-        return urls;
-    },
-
 
     /**
      * Extracts medium properties.
@@ -293,6 +378,48 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
     },
 
     /**
+     * If there is selected text and it is part of an anchor link,
+     * extract the url (and target) from the link (and set them in the form).
+     *
+     * @method _resolveAnchors
+     * @private
+     */
+    _fetchSelectedURLs_anchor: function() {
+
+        // Find the first anchor tag in the selection.
+        var selectednode = this.get('host').getSelectionParentNode();
+        var anchornodes = null;
+        var anchornode = null;
+        var urls = {mediaurl: false, vtturl: false};
+
+
+        // Note this is a document fragment and YUI doesn't like them.
+        if (!selectednode) {
+            return urls;
+        }
+
+        anchornodes = this._findSelectedAnchors(Y.one(selectednode));
+        if (anchornodes.length > 0) {
+            anchornode = anchornodes[0];
+            STATE.selectednode = anchornode;
+            urls.mediaurl = anchornode.getAttribute('href');
+            urls.vtturl = anchornode.getAttribute('data-subtitles');
+
+            if(urls.vtturl=="" && urls.mediaurl!=""){
+                var tempurl = new URL(urls.mediaurl);
+                var urlParams = new URLSearchParams(tempurl.search);
+                if(urlParams) {
+                    urls.vtturl = urlParams.get('data-subtitles');
+                }
+            }
+        }
+        return urls;
+    },
+
+
+
+
+    /**
      * Look up and down for the nearest anchor tags that are least partly contained in the selection.
      *
      * @method _findSelectedAnchors
@@ -328,87 +455,6 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
     },
 
     /**
-     * Gets the root context for all templates, with extra supplied context.
-     *
-     * @method _getContext
-     * @param  {Object} extra The extra context to add
-     * @return {Object}
-     * @private
-     */
-    _getContext:
-        function(extra) {
-        return Y.merge({
-            elementid: this.get('host').get('elementid'),
-            imgpath: M.cfg.wwwroot + '/lib/editor/atto/plugins/subtitle/pix/e/',
-            component: COMPONENTNAME,
-            helpStrings: this.get('help'),
-            CSS: CSS
-        }, extra);
-    },
-
-
-
-    /**
-     * Display the media editing tool.
-     *
-     * @method _displayDialogue
-     * @private
-     */
-    _displayDialogue: function(e,recorder) {
-
-        //whats this?
-        if (this.get('host').getSelection() === false) {
-            return;
-        }
-
-        //Set size and title
-        var title = M.util.get_string('subtitle', COMPONENTNAME);
-        var width = '1200px';
-
-        var d_conf = {};
-        d_conf.headerContent =title;
-        d_conf.focusAfterHide = SHORTNAME;
-        d_conf.width = width;
-        //d_conf.height=height;
-
-        var dialogue = this.getDialogue(d_conf);
-
-        // Set the dialogue content, and then show the dialogue.
-        dialogue.set('bodyContent', this._getDialogueContent()).show();
-
-        //store some common elements we will refer to later
-        STATE.elementid = this.get('host').get('elementid');
-        var that=this;
-
-        //so finally load those recorders
-        this._loadSubtitleEditor();
-    },
-
-    /**
-     * Loads or reloads the recorders
-     *
-     * @method _loadRecorders
-     * @private
-     */
-    _loadSubtitleEditor: function(){
-        var that = this;
-        that.uploaded=false;
-
-        //get our selected URLs (either from media tags or anchor links)
-        var medium = this.get('host').getSelectedNodes().filter('video,audio').shift();
-        if(medium){
-            var selectedURLs = this._fetchSelectedURLs_mediatag(medium);
-        }else{
-            var selectedURLs = this._fetchSelectedURLs_anchor();
-        }
-
-
-        require(['atto_subtitle/loader'], function(loader) {
-            loader.init(selectedURLs);
-        });
-    },
-
-    /**
      * Returns the dialogue content for the tool.
      *
      * @method _getDialogueContent
@@ -423,53 +469,37 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         return content;
     },
 
+    _updateAndClose: function(url){
+        var updated = false;
 
-    /**
-     * Inserts the link or media element onto the page
-     * @method _doInsert
-     * @private
-     */
-    _doInsert : function(mediaurl, mediafilename){
+        //if this is a media selection
+        if(STATE.selectednodetype==NODE_TYPE.MEDIA) {
+            STATE.selectednode.all('track').each(function (track) {
+                if (track.getAttribute('kind') == 'captions' && !updated) {
+                    track.setAttribute('src', url);
+                    updated = true;
+                }
+            });
+        }else{
+          //if this is an anchor selection
+            var tempurl = new URL(STATE.mediaurl);
+            var useparams = '';
+            var urlParams = new URLSearchParams(tempurl.search);
+            if (urlParams) {
+                urlParams.set('data-subtitles', url);
+                useparams = urlParams.toString();
+            } else {
+                useparams = '?data-subtitles' + url;
+            }
+            tempurl.search = useparams;
+            STATE.selectednode.setAttribute('href', tempurl.href);
+        }
+
+
         this.getDialogue({
             focusAfterHide: null
         }).hide();
-
-        //default context values(link) for template
-        var context = {};
-        context.url = mediaurl;
-        context.name = mediafilename;
-        context.issubtitling = STATE.subtitling;
-        context.language=CLOUDPOODLL.language;
-        context.subtitleurl = mediaurl + '.vtt';
-        var template = TEMPLATES.HTML_MEDIA.LINK;
-
-        switch(STATE.insertmethod){
-
-            case INSERTMETHOD.TAGS:
-                if(STATE.currentrecorder == RECORDERS.VIDEO){
-                    context.width = false;
-                    context.height = false;
-                    context.poster = false;
-                    template = TEMPLATES.HTML_MEDIA.VIDEO;
-                }else {
-                    context.width = false;
-                    context.height = false;
-                    context.poster = false;
-                    template = TEMPLATES.HTML_MEDIA.AUDIO;
-                }
-                break;
-
-            case INSERTMETHOD.LINK:
-            default:
-                //do nothing special actually.
-        }
-
-        var content =
-            Y.Handlebars.compile(template)(context);
-        this.editor.focus();
-        this.get('host').insertContentAtFocusPoint(content);
         this.markUpdated();
-
     }
 }, { ATTRS: {
     disabled: {
