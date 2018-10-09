@@ -3,8 +3,8 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
     return {
         controls: {},
 
-        init: function(){
-           this.initControls();
+        init: function(mediatype){
+           this.initControls(mediatype);
            this.registerEvents();
         },
 

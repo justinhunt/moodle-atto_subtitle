@@ -85,7 +85,7 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
             //poodllsubtitle.init(this.sampledata,mediatype);
             poodllsubtitle.init([],mediatype);
             this.loadMediaAndVtt(selectedURLs.mediaurl,selectedURLs.vtturl);
-            this.runtests();
+           // this.runtests();
       },
 
       loadMediaAndVtt: function(mediaurl,vtturl){

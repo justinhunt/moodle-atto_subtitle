@@ -401,13 +401,13 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             anchornode = anchornodes[0];
             STATE.selectednode = anchornode;
             urls.mediaurl = anchornode.getAttribute('href');
-            urls.vtturl = anchornode.getAttribute('data-subtitles');
 
-            if(urls.vtturl=="" && urls.mediaurl!=""){
+            if(urls.mediaurl!=""){
                 var tempurl = new URL(urls.mediaurl);
                 var urlParams = new URLSearchParams(tempurl.search);
                 if(urlParams) {
                     urls.vtturl = urlParams.get('data-subtitles');
+                    urls.mediaurl=urls.mediaurl.replace(tempurl.search,'');
                 }
             }
         }
@@ -489,6 +489,9 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             } else {
                 useparams = '?data-subtitles' + url;
             }
+            //lets decode the funny characters, or Moodle wont shift vtt file from draft -> permanent
+            useparams = decodeURIComponent(useparams);
+
             tempurl.search = useparams;
             STATE.selectednode.setAttribute('href', tempurl.href);
         }
