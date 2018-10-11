@@ -52,7 +52,8 @@ var STATE ={
     subtitling: false,
     selectednode: false,
     selectednodetype: false,
-    mediaurl: false
+    mediaurl: false,
+    fullurl: false
 };
 
 var TEMPLATES = {
@@ -266,6 +267,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             var selectedURLs = this._fetchSelectedURLs_anchor();
         }
         STATE.mediaurl = selectedURLs.mediaurl;
+        STATE.fullurl = selectedURLs.fullurl;
 
         var uploadcallback = function(eventtype, responseText) {
 
@@ -314,7 +316,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
 
 
         //Search for Media tags
-        var urls = {mediaurl: false, vtturl: false};
+        var urls = {mediaurl: false, vtturl: false, fullurl: false};
         var mediumProperties = medium ? this._getMediumProperties(medium) : false;
 
         if(mediumProperties){
@@ -323,6 +325,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             }else{
                 urls.mediaurl = mediumProperties.src;
             }
+            urls.fullurl = urls.mediaurl;
             if(mediumProperties.tracks && 'captions' in mediumProperties.tracks && mediumProperties.tracks['captions'].length > 0 ) {
                 urls.vtturl = mediumProperties.tracks['captions'][0].src;
             }
@@ -388,7 +391,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         var selectednode = this.get('host').getSelectionParentNode();
         var anchornodes = null;
         var anchornode = null;
-        var urls = {mediaurl: false, vtturl: false};
+        var urls = {mediaurl: false, vtturl: false, fullurl: false};
 
 
         // Note this is a document fragment and YUI doesn't like them.
@@ -400,14 +403,15 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         if (anchornodes.length > 0) {
             anchornode = anchornodes[0];
             STATE.selectednode = anchornode;
-            urls.mediaurl = anchornode.getAttribute('href');
+            urls.fullurl = anchornode.getAttribute('href');
+            urls.mediaurl=urls.fullurl;
 
-            if(urls.mediaurl!=""){
-                var tempurl = new URL(urls.mediaurl);
+            if(urls.fullurl!=""){
+                var tempurl = new URL(urls.fullurl);
                 var urlParams = new URLSearchParams(tempurl.search);
                 if(urlParams) {
                     urls.vtturl = urlParams.get('data-subtitles');
-                    urls.mediaurl=urls.mediaurl.replace(tempurl.search,'');
+                    urls.mediaurl=urls.fullurl.replace(tempurl.search,'');
                 }
             }
         }
@@ -480,14 +484,14 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             });
         }else{
           //if this is an anchor selection
-            var tempurl = new URL(STATE.mediaurl);
+            var tempurl = new URL(STATE.fullurl);
             var useparams = '';
             var urlParams = new URLSearchParams(tempurl.search);
             if (urlParams) {
                 urlParams.set('data-subtitles', url);
                 useparams = urlParams.toString();
             } else {
-                useparams = '?data-subtitles' + url;
+                useparams = '?data-subtitles=' + url;
             }
             //lets decode the funny characters, or Moodle wont shift vtt file from draft -> permanent
             useparams = decodeURIComponent(useparams);
