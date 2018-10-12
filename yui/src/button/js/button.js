@@ -81,17 +81,17 @@ var TEMPLATES = {
         '                            <span class="time time-total">0:00</span>\n' +
         '                        </div>\n' +
         '                        <div class="buttons-group">\n' +
-        '                            <a id="poodllsubtitle_addnew" class="poodllsubtitle_addnew btn add" title="Add new Subtitle"></a>\n' +
-        '                            <a class="btn prev" id="btn_prev" title="Loop Back"></a>\n' +
-        '                            <a class="btn play" id="btn_play" title="Play/Pause"></a>\n' +
-        '                            <a class="btn next" id="btn_next" title="Loop Forward"></a>\n' +
+        '                            <a id="poodllsubtitle_addnew" class="poodllsubtitle_addnew btn add" title="{{get_string "addnew" component}}"></a>\n' +
+        '                            <a class="btn prev" id="btn_prev" title="{{get_string "stepback" component}}"></a>\n' +
+        '                            <a class="btn play" id="btn_play" title="{{get_string "playpause" component}}"></a>\n' +
+        '                            <a class="btn next" id="btn_next" title="{{get_string "stepahead" component}}"></a>\n' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                    <div class="subtitleset_container">\n' +
         '                        <div id=\'poodllsubtitle_tiles\' class=\'poodllsubtitle_tiles subtitleset_list\'></div>\n' +
         '                        <div class="save_and_download">\n' +
-        '                            <a class="save_btn" href="#" id="poodllsubtitle_save">Save and download</a>\n' +
-        '                            <a class="cancel_btn" href="#" id="poodllsubtitle_cancelall" title="Cancel all Changes"></a>\n' +
+        '                            <a class="save_btn" href="#" id="poodllsubtitle_save">{{get_string "savesubtitles" component}}</a>\n' +
+        '                            <a class="cancel_btn" href="#" id="poodllsubtitle_removeall" title="{{get_string "removesubtitles" component}}"></a>\n' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                </div>\n' +
@@ -102,19 +102,19 @@ var TEMPLATES = {
         '                            <div class="block_input">\n' +
         '                                <input type="text" name="poodllsubtitle_edstart" id="poodllsubtitle_edstart" class="poodllsubtitle_edstart">\n' +
         '                                <div class="input_arr_block">\n' +
-        '                                    <div class="input_arr input_arr_top"></div>\n' +
-        '                                    <div class="input_arr input_arr_bot"></div>\n' +
+        '                                    <div id="poodllsubtitle_startbumpup" class="input_arr input_arr_top"></div>\n' +
+        '                                    <div id="poodllsubtitle_startbumpdown" class="input_arr input_arr_bot"></div>\n' +
         '                                </div>\n' +
         '                            </div>\n' +
-        '                            <button type="button" id="poodllsubtitle_startsetnow" class="poodllsubtitle_startsetnow now_btn">Now</button>\n' +
+        '                            <button type="button" id="poodllsubtitle_startsetnow" class="poodllsubtitle_startsetnow now_btn">{{get_string "now" component}}</button>\n' +
         '                            <div class="block_input">\n' +
         '                                <input type="text" name="poodllsubtitle_edend" id="poodllsubtitle_edend" class="poodllsubtitle_edpart">\n' +
         '                                <div class="input_arr_block">\n' +
-        '                                    <div class="input_arr input_arr_top"></div>\n' +
-        '                                    <div class="input_arr input_arr_bot"></div>\n' +
+        '                                    <div id="poodllsubtitle_endbumpup" class="input_arr input_arr_top"></div>\n' +
+        '                                    <div id="poodllsubtitle_endbumpdown" class="input_arr input_arr_bot"></div>\n' +
         '                                </div>\n' +
         '                            </div>\n' +
-        '                            <button type="button" id="poodllsubtitle_endsetnow" class="poodllsubtitle_endsetnow now_btn">Now</button>\n' +
+        '                            <button type="button" id="poodllsubtitle_endsetnow" class="poodllsubtitle_endsetnow now_btn">{{get_string "now" component}}</button>\n' +
         '                        </div>\n' +
         '                        <div class="subtitleset_text">\n' +
         '                            <textarea class="textarea" name="poodllsubtitle_edpart" id="poodllsubtitle_edpart" class="poodllsubtitle_edpart"></textarea>\n' +
@@ -130,7 +130,7 @@ var TEMPLATES = {
         '                            <div class="subs_btn_block poodllsubtitle_edsplit" id="poodllsubtitle_edsplit">\n' +
         '                                <img src="{{imgpath}}btn_ic_3.svg">\n' +
         '                            </div>\n' +
-        '                            <button type="button" id="poodllsubtitle_edcancel" class="poodllsubtitle_edcancel">Cancel</button>\n' +
+        '                            <button type="button" id="poodllsubtitle_edcancel" class="poodllsubtitle_edcancel">{{get_string "cancel" component}}</button>\n' +
         '                        </div>\n' +
         '                    </div>\n' +
         '\n' +
@@ -170,7 +170,7 @@ var TEMPLATES = {
 Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
     initializer: function(config) {
 
-            // Add the poodll button first (if we are supposed to)
+            // Add the subtitle button first (if we are supposed to)
             if(!config.disabled){
                 this.addButton({
                     icon: SHORTNAME,
@@ -219,6 +219,20 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         //whats this?
         if (this.get('host').getSelection() === false) {
             return;
+        }
+
+        //if no media selected ..  cancel
+        var selection = this.get('host').getSelectedNodes().filter('video,audio,a');
+        if(!selection || selection.size()==0){
+            var theparent = this.get('host').getSelectionParentNode();
+            // Note this is a document fragment and YUI doesn't like them.
+            if (!theparent) {
+                return ;
+            }
+            anchornodes = this._findSelectedAnchors(Y.one(theparent));
+            if (anchornodes.length == 0) {
+                return;
+            }
         }
 
         //Set size and title
@@ -270,31 +284,34 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         STATE.fullurl = selectedURLs.fullurl;
 
         var uploadcallback = function(eventtype, responseText) {
-
-            if (eventtype === 'upload-ended') {
-                var url = false;
-                var response = window.JSON.parse(responseText);
-                if(response) {
-                    if ('url' in response) {
-                        url = response.url;
+            switch (eventtype){
+                case 'upload-ended':
+                    var url = false;
+                    var response = window.JSON.parse(responseText);
+                    if (response) {
+                        if ('url' in response) {
+                            url = response.url;
+                        }
+                        else if ('newfile' in response) {
+                            url = response.newfile.url;
+                        }
                     }
-                    else if('newfile' in response)
-                    {
-                        url = response.newfile.url;
-                    }
-                }
 
-                //if we got a URL we use it, else we error out
-                if(url){
-                    that._updateAndClose(url);
-                }else{
-                    //ouch that didn't work .. lets download so the user doesn't lose all their work
-                    alert(M.util.get_string('uploadproblem', COMPONENTNAME));
-                    loader.do_download();
-                }
-            } else {
-                //no need to do anything really
-                //console.log(eventtype);
+                    //if we got a URL we use it, else we error out
+                    if (url) {
+                        that._updateAndClose(url);
+                    } else {
+                        //ouch that didn't work .. lets download so the user doesn't lose all their work
+                        alert(M.util.get_string('uploadproblem', COMPONENTNAME));
+                        loader.do_download();
+                    }
+                    break;
+                case 'remove-subtitles':
+                    that._removeAndClose(false);
+                    break;
+                default:
+                    //no need to do anything really
+                    //console.log(eventtype);
             }
         };
 
@@ -471,6 +488,42 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         return content;
     },
 
+
+    _removeAndClose: function(url) {
+        var updated = false;
+        //if this is a media selection
+        if(STATE.selectednodetype==NODE_TYPE.MEDIA) {
+            STATE.selectednode.all('track').each(function (track) {
+                if (track.getAttribute('kind') == 'captions' && !updated) {
+                    track.setAttribute('src', '');
+                    updated = true;
+                }
+            });
+        }else{
+            //if this is an anchor selection
+            var tempurl = new URL(STATE.fullurl);
+            var useparams = '';
+            var urlParams = new URLSearchParams(tempurl.search);
+            if (urlParams) {
+                urlParams.delete('data-subtitles');
+                useparams = urlParams.toString();
+            } else {
+                useparams = '';
+            }
+            //lets decode the funny characters, or Moodle wont shift vtt file from draft -> permanent
+            useparams = decodeURIComponent(useparams);
+
+            tempurl.search = useparams;
+            STATE.selectednode.setAttribute('href', tempurl.href);
+            updated=true;
+        }
+
+        this.getDialogue({
+            focusAfterHide: null
+        }).hide();
+        this.markUpdated();
+    },
+
     _updateAndClose: function(url){
         var updated = false;
 
@@ -498,8 +551,8 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
 
             tempurl.search = useparams;
             STATE.selectednode.setAttribute('href', tempurl.href);
+            updated=true;
         }
-
 
         this.getDialogue({
             focusAfterHide: null

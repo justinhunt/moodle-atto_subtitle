@@ -1,0 +1,2 @@
+Version 1.0.2 (Build 2017101203)
+-Initial release of Atto Subtitle

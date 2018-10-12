@@ -49,5 +49,11 @@ $string['subtitleinstructions'] = 'Requested subtitles are ready about 5 minutes
 $string['subtitle:visible'] = 'Visible';
 $string['uploadprogress'] = 'Progress';
 $string['uploadproblem'] = 'There was a problem uploading your file. So when you close this message, it will download. Please save it.';
-
-
+$string['confirmremovesubtitles'] = 'Really remove all subtitles from this media?';
+$string['savesubtitles'] = 'Save Subtitles';
+$string['removesubtitles'] = 'Remove Subtitles';
+$string['addnew'] = 'Add new';
+$string['stepback'] = 'Step back';
+$string['stepahead'] = 'Step ahead';
+$string['playpause'] = 'Play/pause';
+$string['now'] = 'Now';

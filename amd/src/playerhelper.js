@@ -43,7 +43,6 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
             } else {
                 current = 0;
             }
-
             this.controls.mediaPlayer[0].currentTime = current;
         },
         stepForward: function() {
@@ -100,28 +99,6 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
             c.nextBtn.click(function(e) {
                 e.preventDefault();
                 that.stepForward();
-            });
-
-            $('.input_arr_top').click(function(e) {
-                e.preventDefault();
-                var $this = $(this);
-                var $target = $this.parent().siblings('input');
-
-                var newTime = parseInt($target.val()) + 1;
-
-                $target.val(newTime);
-
-            });
-
-            $('.input_arr_bot').click(function(e) {
-                e.preventDefault();
-                var $this = $(this);
-                var $target = $this.parent().siblings('input');
-
-                var newTime = parseInt($target.val()) + 1;
-
-                $target.val(newTime);
-
             });
 
             c.progressLine.click(function(e) {

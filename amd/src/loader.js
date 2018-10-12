@@ -110,12 +110,12 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
       },
 
       initControls: function(){
-          this.controls.mediaurl = $('#poodllsubtitle_mediainput');
-          this.controls.vtturl = $('#poodllsubtitle_vttinput');
-          this.controls.loadbutton = $('#poodllsubtitle_load');
-          this.controls.downloadbutton = $('#poodllsubtitle_download');
-          this.controls.savebutton = $('#poodllsubtitle_save');
-          this.controls.cancelallbutton = $('#poodllsubtitle_cancelall');
+          this.controls.mediaurl = $(constants.mediaurlinput);
+          this.controls.vtturl = $(constants.vtturlinput);
+          this.controls.loadbutton = $(constants.loadbutton);
+          this.controls.downloadbutton = $(constants.downloadbutton);
+          this.controls.savebutton = $(constants.savebutton);
+          this.controls.cancelallbutton = $(constants.removeallbutton);
       },
 
       initEvents: function(){
@@ -139,8 +139,13 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
            });
 
            this.controls.cancelallbutton.click(function() {
-               console.log('Cancel all changes. Currently refreshes the page');
-               window.location.reload();
+               var message = M.util.get_string('confirmremovesubtitles',constants.component);
+               if (confirm(message)) {
+                   that.do_removesubtitles();
+               } else {
+                   // Do nothing!
+               }
+
            });
       },
 
@@ -149,6 +154,10 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
           url = url.substring(0, (url.indexOf("?") == -1) ? url.length : url.indexOf("?"));
           var filename = url.substring(url.lastIndexOf("/") + 1, url.length);
           return filename;
+      },
+
+      do_removesubtitles: function(){
+            this.uploadCallback('remove-subtitles');
       },
 
       do_download: function(){

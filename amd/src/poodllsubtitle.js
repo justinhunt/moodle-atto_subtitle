@@ -1,4 +1,4 @@
-define(["jquery","atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_subtitle/previewhelper","atto_subtitle/playerhelper"], function($, vtthelper, subtitleset, previewhelper, playerhelper) {
+define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_subtitle/previewhelper","atto_subtitle/playerhelper"], function($, constants, vtthelper, subtitleset, previewhelper, playerhelper) {
 
     //pooodllsubtitle helper is about the subtitle tiles and editing
 
@@ -34,6 +34,10 @@ define(["jquery","atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_sub
           this.controls.buttonaddnew = $("#poodllsubtitle_addnew");
           this.controls.buttonstartsetnow = $("#poodllsubtitle_startsetnow");
           this.controls.buttonendsetnow = $("#poodllsubtitle_endsetnow");
+          this.controls.buttonstartbumpup = $("#poodllsubtitle_startbumpup");
+          this.controls.buttonstartbumpdown = $("#poodllsubtitle_startbumpdown");
+          this.controls.buttonendbumpup = $("#poodllsubtitle_endbumpup");
+          this.controls.buttonendbumpdown = $("#poodllsubtitle_endbumpdown");
       },
 
       hideEditor: function(){
@@ -139,6 +143,33 @@ define(["jquery","atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_sub
               that.controls.edend.val(displaytime);
           });
 
+          //editor bump start time up or down
+          this.controls.buttonstartbumpup.click(function(){
+              that.doBump(that.controls.edstart,constants.bumpinterval);
+          });
+          this.controls.buttonstartbumpdown.click(function(){
+              that.doBump(that.controls.edstart,(-1*constants.bumpinterval));
+          });
+
+          //editor bump end time up or down
+          this.controls.buttonendbumpup.click(function(){
+              that.doBump(that.controls.edend,constants.bumpinterval);
+          });
+          this.controls.buttonendbumpdown.click(function(){
+              that.doBump(that.controls.edend,(-1*constants.bumpinterval));
+          });
+
+          this.controls.edstart.keypress(function(e) {
+              var code = (e.keyCode ? e.keyCode : e.which);
+              if (!(
+                      (code >= 48 && code <= 57) //numbers
+                      || (code == 58) //colon
+                      || (code == 46) //period
+                  )
+              )
+                  e.preventDefault();
+          });
+
           //"Add new tile" button click event
           this.controls.buttonaddnew.click(function(){
               var currentcount = subtitleset.fetchCount();
@@ -158,6 +189,16 @@ define(["jquery","atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_sub
           previewhelper.highlightItem = this.highlightContainer;
           previewhelper.deHighlightAll = this.deHighlightAll;
 
+      },
+
+      doBump: function(edcontrol,bumpvalue){
+          var displaytime = edcontrol.val();
+          if(!vtthelper.validateTimeString(displaytime)){return;}
+          var displayms = vtthelper.timeString2ms(displaytime);
+          displayms += bumpvalue;
+          if(displayms<0){displayms=0;}
+          displaytime = vtthelper.ms2TimeString(displayms);
+          edcontrol.val(displaytime);
       },
 
       //each subtitle item has a "text tile" with times and subtitle text that we display

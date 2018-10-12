@@ -14,7 +14,15 @@ define(["jquery"], function($) {
         timetotal: '.time-total',
         timecurrent: '.time-current',
         mediatype_video: 'video',
-        mediatype_audio: 'audio'
+        mediatype_audio: 'audio',
+        mediaurlinput: '#poodllsubtitle_mediainput',
+        vtturlinput: '#poodllsubtitle_vttinput',
+        loadbutton: '#poodllsubtitle_load',
+        downloadbutton: '#poodllsubtitle_download',
+        savebutton: '#poodllsubtitle_save',
+        removeallbutton: '#poodllsubtitle_removeall',
+        bumpinterval: 500,
+        component: 'atto_subtitle'
     }
 
 });
