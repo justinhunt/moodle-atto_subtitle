@@ -138,20 +138,20 @@ button#poodllsubtitle_edcancel:hover,
 
 /* MEDIA CSS */
 @media only screen and (max-width: 1200px) {
-    .player {
+    .subtitlepreviewplayer {
         width: 570px;
         height: auto;
         flex-direction: column;
     }
-    .player .top-box,
-    .player .top-box .poodllsubtitle_video {height: 320px;}
+    .subtitlepreviewplayer .top-box,
+    .subtitlepreviewplayer .top-box .poodllsubtitle_video {height: 320px;}
     .subtitleset_container .subtitleset_list {
         height: 300px;
     }
-    .player .top-box{border-radius: 10px 10px 0px 0px;}
-    .player .control-panel,
+    .subtitlepreviewplayer .top-box{border-radius: 10px 10px 0px 0px;}
+    .subtitlepreviewplayer .control-panel,
     .subtitleset_container .subtitleset_list{border-left: none;}
-    .player .control-panel{border-top: 1px solid #E3E4F1;}
+    .subtitlepreviewplayer .control-panel{border-top: 1px solid #E3E4F1;}
 }
 
 @media only screen and (max-width: 991px) {}
@@ -159,23 +159,23 @@ button#poodllsubtitle_edcancel:hover,
 @media only screen and (max-width: 768px) {}
 
 @media only screen and (max-width: 600px) {
-    .wrapper{
+    .subtitlewrapper{
         width: 100%;
         padding-left: 15px;
         padding-right: 15px;
     }
     .file-upload{width: 100%;}
-    .player {width: 100%;}
-    .player .control-panel{
+    .subtitlepreviewplayer {width: 100%;}
+    .subtitlepreviewplayer .control-panel{
         height: auto;
         flex-direction: column;
     }
-    .player .progress-bar {
+    .subtitlepreviewplayer .preview-progress-bar {
         margin-top: 15px;
         width: 100%;
     }
-    .player .progress-line {width: 100%;}
-    .player .buttons-group{margin: 20px 0;}
+    .subtitlepreviewplayer .progress-line {width: 100%;}
+    .subtitlepreviewplayer .buttons-group{margin: 20px 0;}
 
     .subtitleset_container .subtitleset_list .subtitleset_block {
         flex-wrap: wrap;
@@ -209,8 +209,8 @@ button#poodllsubtitle_edcancel:hover,
 
 @media only screen and (max-width: 480px) {
     .file-upload {padding: 0 15px;}
-    .player .top-box,
-    .player .top-box .poodllsubtitle_video {height: 250px;}
+    .subtitlepreviewplayer .top-box,
+    .subtitlepreviewplayer .top-box .poodllsubtitle_video {height: 250px;}
     .subtitleset_container .save_and_download .save_btn {
         font-size: 14px;
         padding-right: 45px;
@@ -228,8 +228,8 @@ button#poodllsubtitle_edcancel:hover,
 }
 
 @media only screen and (max-width: 360px) {
-    .player .top-box,
-    .player .top-box .poodllsubtitle_video {height: 200px;}
+    .subtitlepreviewplayer .top-box,
+    .subtitlepreviewplayer .top-box .poodllsubtitle_video {height: 200px;}
 }
 
 
@@ -251,7 +251,7 @@ a:focus {
     text-decoration: none;
 }
 */
-.player_m {
+.subtitlepreviewplayer_m {
     width: 570px;
     height: 700px;
     margin: 200px auto;
@@ -548,10 +548,10 @@ a:hover{
     opacity: 1;
 }
 
-.wrapper{
+.subtitlewrapper{
     width: 100%;
-    min-height: 100vh;
-    display: flex;
+    min-height: 60vh;
+    /* display: flex; */
     align-items: center;
     justify-content: center;
 }
@@ -635,7 +635,7 @@ a:hover{
 
 /* player */
 
-.player {
+.subtitlepreviewplayer {
     width: 1140px;
     height: 345px;
     max-width: 100%;
@@ -648,11 +648,11 @@ a:hover{
 }
 
 
-.player.player_little {
+.subtitlepreviewplayer.player_little {
     width: 572px;
     height:auto;
 }
-.player .top-box {
+.subtitlepreviewplayer .top-box {
     width: 100%;
     /* height: 344px; */
     border-radius: 10px 0px 0px 10px;
@@ -664,23 +664,23 @@ a:hover{
     position: relative;
 }
 
-.player .top-box .poodllsubtitle_video {
+.subtitlepreviewplayer .top-box .poodllsubtitle_video {
     width: 100%;
     height: 344px;
     position: relative;
     background-color: #000;
 }
 
-.player .top-box.no-image{
+.subtitlepreviewplayer .top-box.no-image{
     background-image: none;
 }
 
-.player .top-box.no-image.audio{
+.subtitlepreviewplayer .top-box.no-image.audio{
     display: flex;
     align-items: center;
 }
 
-.player .top-box .text-box{
+.subtitlepreviewplayer .top-box .text-box{
     padding: 10px 25px;
     font-weight: 500;
     color: #fff;
@@ -692,7 +692,7 @@ a:hover{
     position: relative;
 }
 
-.player .bottom-box{
+.subtitlepreviewplayer .bottom-box{
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -704,7 +704,7 @@ a:hover{
     flex-direction: column;
 }
 
-.player .control-panel{
+.subtitlepreviewplayer .control-panel{
     width: 100%;
     height: 50px;
     padding: 0 20px 0 22px;
@@ -718,13 +718,13 @@ a:hover{
     border-top-right-radius: 10px;
 }
 
-.player .progress-bar{
+.subtitlepreviewplayer .preview-progress-bar{
     display: flex;
     align-items: center;
 
 }
 
-.player .progress-line{
+.subtitlepreviewplayer .progress-line{
     width: 275px;
     height: 3px;
     margin: 0 8px;
@@ -733,7 +733,7 @@ a:hover{
     cursor: pointer;
 }
 
-.player .progress-line .green-progress{
+.subtitlepreviewplayer .progress-line .green-progress{
     content: '';
     width: 0;
     height: 3px;
@@ -744,7 +744,7 @@ a:hover{
     transition: all 0.3s ease;
 }
 
-.player .progress-line .progress-marker {
+.subtitlepreviewplayer .progress-line .progress-marker {
     content: '';
     width: 15px;
     height: 15px;
@@ -758,13 +758,13 @@ a:hover{
     transform: translateX(-50%);
 }
 
-.player .buttons-group{
+.subtitlepreviewplayer .buttons-group{
     display: flex;
 }
 
-.player .buttons-group .btn{margin-left: 5px;}
+.subtitlepreviewplayer .buttons-group .btn{margin-left: 5px;}
 
-.player .btn{
+.subtitlepreviewplayer .btn{
     width: 34px;
     height: 34px;
     background: radial-gradient(10.62px at 50% 68.75%, #FFFFFF 0%, #F9FAFD 100%), #FFFFFF;
@@ -777,39 +777,39 @@ a:hover{
     background-size: 13px;
 }
 
-.player .btn.play{background-image: url([[pix:atto_subtitle|e/play-icon]]);}
-.player .btn.play.active {
+.subtitlepreviewplayer .btn.play{background-image: url([[pix:atto_subtitle|e/play-icon]]);}
+.subtitlepreviewplayer .btn.play.active {
     background-image: url([[pix:atto_subtitle|e/pause-button]]);
 }
-.player .btn.prev{
+.subtitlepreviewplayer .btn.prev{
     background-image: url([[pix:atto_subtitle|e/prev-icon]]);
     -webkit-background-size: 16px;
     background-size: 16px;
 }
-.player .btn.next{
+.subtitlepreviewplayer .btn.next{
     background-image: url([[pix:atto_subtitle|e/next-icon]]);
     -webkit-background-size: 16px;
     background-size: 16px;
 }
-.player .btn.exit{
+.subtitlepreviewplayer .btn.exit{
     background-image: url([[pix:atto_subtitle|e/exit-icon]]);
     -webkit-background-size: 18px;
     background-size: 18px;
 }
-.player .btn.cencel{
+.subtitlepreviewplayer .btn.cencel{
     background-image: url([[pix:atto_subtitle|e/cancel-icon]]);
     -webkit-background-size: 18px;
     background-size: 18px;
 }
 
-.player .btn.add{
+.subtitlepreviewplayer .btn.add{
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(59.59deg, #77DB7B 13.47%, #57DA54 86.53%);
 }
 
-.player .btn.add:after{
+.subtitlepreviewplayer .btn.add:after{
     content: '';
     display: block;
     width: 12px;
@@ -855,31 +855,31 @@ a:hover{
     border-style: solid;
     border-color: #F9FAFD transparent transparent transparent;
 }
-.player.player-audio {
+.subtitlepreviewplayer.player-audio {
     flex-direction: column;
 }
 
-.player.player-audio .bottom-box {
+.subtitlepreviewplayer.player-audio .bottom-box {
     flex: 1;
 }
 
-.player.player-audio .top-box {
+.subtitlepreviewplayer.player-audio .top-box {
     height: auto!important;
 }
 
-.player.player-audio .top-box .poodllsubtitle_video {
+.subtitlepreviewplayer.player-audio .top-box .poodllsubtitle_video {
     display: none;
 }
 
-.player.player-audio .top-box .text-box {
+.subtitlepreviewplayer.player-audio .top-box .text-box {
     border-radius: 5px 5px 0 0;
     margin-bottom: 0;
     transform: none;
     width: 100%;
 }
 
-.player.player-audio .progress-bar,
-.player.player-audio .progress-line {
+.subtitlepreviewplayer.player-audio .preview-progress-bar,
+.subtitlepreviewplayer.player-audio .progress-line {
     width: 100%;
 }
 

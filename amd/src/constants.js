@@ -2,10 +2,11 @@ define(["jquery"], function($) {
     return{
         videoplayer: '#poodllsubtitle_video',
         audioplayer: '#poodllsubtitle_audio',
+        root: '#root',
         playbutton: '#btn_play',
         prevbutton: '#btn_prev',
         nextbutton: '#btn_next',
-        progressbar: '.progress-bar',
+        progressbar: '.preview-progress-bar',
         progressline: '.progress-line',
         previewline: '#poodllsubtitle_previewline',
         greenprogress: '.green-progress',

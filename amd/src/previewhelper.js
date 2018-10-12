@@ -20,7 +20,7 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
 
           this.controls.videoplayer = $(constants.videoplayer);
           this.controls.audioplayer = $(constants.audioplayer);
-          this.controls.root = $('#root');
+          this.controls.root = $(constants.root);
           if(this.mediatype==constants.mediatype_audio){
               this.controls.mediaplayer = this.controls.audioplayer
           }else {

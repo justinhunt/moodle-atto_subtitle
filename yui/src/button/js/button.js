@@ -58,9 +58,9 @@ var STATE ={
 
 var TEMPLATES = {
         ROOT: '' +
-            '<div class="wrapper">\n' +
+            '<div class="subtitlewrapper">\n' +
         '\n' +
-        '            <div class="player" id="root">\n' +
+        '            <div class="subtitlepreviewplayer" id="root">\n' +
         '\n' +
         '                \n' +
         '\n' +
@@ -72,7 +72,7 @@ var TEMPLATES = {
         '\n' +
         '                <div class="bottom-box">\n' +
         '                    <div class="control-panel">\n' +
-        '                        <div class="progress-bar">\n' +
+        '                        <div class="preview-progress-bar">\n' +
         '                            <span class="time time-current">0:00</span>\n' +
         '                            <div class="progress-line">\n' +
         '                                <span class="green-progress"></span>\n' +
