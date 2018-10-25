@@ -24,9 +24,8 @@
 
 
 use atto_subtitle\constants;
-use atto_subtitle\utils;
 
-
+defined('MOODLE_INTERNAL') || die();
 
 
 $settings->add(new admin_setting_configcheckbox(constants::M_COMPONENT .'/enablesubtitling',

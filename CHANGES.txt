@@ -1,2 +1,5 @@
+Version 1.0.4 (Build 2018102501)';
+-tweaks to comments and added MOODLE_INTERNAL checks
+
 Version 1.03 (Build 2018101204)
 -Initial release of Atto Subtitle
