@@ -138,7 +138,7 @@ var TEMPLATES = {
         '        </div>',
         HTML_MEDIA: {
             VIDEO: '' +
-                '&nbsp;<video ' +
+            '&nbsp;<video ' +
             '&nbsp;<audio ' +
             'controls="true" crossorigin="anonymous"' +
             '>' +
@@ -146,23 +146,25 @@ var TEMPLATES = {
             "{{#if issubtitling}}" +
             '<track src="{{subtitleurl}}" kind="caption" srclang="{{language}}" label="{{language}}" default="true">' +
             "{{/if}}" +
-                '</video>&nbsp;',
+            '</video>&nbsp;',
             AUDIO: '' +
-                '&nbsp;<audio ' +
-                    'controls="true" crossorigin="anonymous"' +
-                '>' +
-                    '<source src="{{url}}">' +
+            '&nbsp;<audio ' +
+            'controls="true" crossorigin="anonymous"' +
+            '>' +
+            '<source src="{{url}}">' +
             "{{#if issubtitling}}" +
             '<track src="{{subtitleurl}}" kind="caption" srclang="{{language}}" label="{{language}}" default="true">' +
             "{{/if}}" +
-                '</audio>&nbsp;',
+            '</audio>&nbsp;',
             LINK: '' +
-                '&nbsp;<a href="{{url}}" ' +
+            '&nbsp;<a href="{{url}}" ' +
             "{{#if issubtitling}}" +
             ' data-subtitles="{{subtitleurl}}" data-language="{{language}}" ' +
             "{{/if}}" +
-                '>{{name}}</a>&nbsp;'
-         }
+            '>{{name}}</a>&nbsp;'
+        },
+         CAPTIONTRACK: '' +
+            '<track src="{{subtitleurl}}" kind="caption" srclang="{{language}}" label="{{language}}" default="true">'
 };
 
 
@@ -314,8 +316,6 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
                     //console.log(eventtype);
             }
         };
-
-
 
         require(['atto_subtitle/loader'], function(loader) {
             loader.init(host,uploadcallback,selectedURLs);
@@ -535,6 +535,16 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
                     updated = true;
                 }
             });
+            //if it was not updated then this is a new captions track. Exciting stuff!
+            if(!updated) {
+                var mergedata = {};
+                mergedata.subtitleurl = url;
+                mergedata.language = 'captions';
+                var newtrack = Y.Node.create(
+                    Y.Handlebars.compile(TEMPLATES.CAPTIONTRACK)(mergedata)
+                );
+                STATE.selectednode.append(newtrack);
+            }
         }else{
           //if this is an anchor selection
             var tempurl = new URL(STATE.fullurl);
