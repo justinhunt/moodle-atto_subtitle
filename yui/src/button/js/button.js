@@ -144,7 +144,7 @@ var TEMPLATES = {
             '>' +
             '<source src="{{url}}">' +
             "{{#if issubtitling}}" +
-            '<track src="{{subtitleurl}}" kind="caption" srclang="{{language}}" label="{{language}}" default="true">' +
+            '<track src="{{subtitleurl}}" kind="captions" srclang="{{language}}" label="{{language}}" default="true">' +
             "{{/if}}" +
             '</video>&nbsp;',
             AUDIO: '' +
@@ -153,7 +153,7 @@ var TEMPLATES = {
             '>' +
             '<source src="{{url}}">' +
             "{{#if issubtitling}}" +
-            '<track src="{{subtitleurl}}" kind="caption" srclang="{{language}}" label="{{language}}" default="true">' +
+            '<track src="{{subtitleurl}}" kind="captions" srclang="{{language}}" label="{{language}}" default="true">' +
             "{{/if}}" +
             '</audio>&nbsp;',
             LINK: '' +
@@ -164,7 +164,7 @@ var TEMPLATES = {
             '>{{name}}</a>&nbsp;'
         },
          CAPTIONTRACK: '' +
-            '<track src="{{subtitleurl}}" kind="caption" srclang="{{language}}" label="{{language}}" default="true">'
+            '<track src="{{subtitleurl}}" kind="captions" srclang="{{language}}" label="{{language}}" default="true">'
 };
 
 
