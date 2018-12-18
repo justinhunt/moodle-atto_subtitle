@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018120301;
+$plugin->version   = 2018121800;
 $plugin->requires  = 2016052300;        //moodle 3.1.0
 $plugin->component = 'atto_subtitle';  // Full name of the plugin (used for diagnostics)
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0.6 (Build 2018120301)';
+$plugin->release   = '1.0.7 (Build 2018121800)';
