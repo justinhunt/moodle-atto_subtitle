@@ -164,7 +164,7 @@ button#poodllsubtitle_edcancel:hover,
         padding-left: 15px;
         padding-right: 15px;
     }
-    .file-upload{width: 100%;}
+
     .subtitlepreviewplayer {width: 100%;}
     .subtitlepreviewplayer .control-panel{
         height: auto;
@@ -203,12 +203,9 @@ button#poodllsubtitle_edcancel:hover,
     }
 }
 
-@media only screen and (max-width: 540px) {
-    .file-upload {padding: 0 25px;}
-}
 
 @media only screen and (max-width: 480px) {
-    .file-upload {padding: 0 15px;}
+
     .subtitlepreviewplayer .top-box,
     .subtitlepreviewplayer .top-box .poodllsubtitle_video {height: 250px;}
     .subtitleset_container .save_and_download .save_btn {
@@ -232,25 +229,6 @@ button#poodllsubtitle_edcancel:hover,
     .subtitlepreviewplayer .top-box .poodllsubtitle_video {height: 200px;}
 }
 
-
-
-/* NORMALISE CSS */
-
-/* RESET CSS */
-
-/* STYLESHEET CSS */
-/*
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-a,
-a:hover,
-a:focus {
-    text-decoration: none;
-}
-*/
 .subtitlepreviewplayer_m {
     width: 570px;
     height: 700px;
@@ -479,7 +457,6 @@ a:focus {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     background: linear-gradient(10.08deg, #77DB7B -17.6%, #57DA54 139.61%);
-    /* box-shadow: 0px 7px 25px rgba(33, 32, 69, 0.15); */
     border-radius: 5px;
     width:calc(100% - 64px);
     height: 56px;
@@ -524,30 +501,6 @@ a:focus {
     border-radius: 5px;
 }
 
-/* Player CSS */
-/* main */
-*{box-sizing: border-box;}
-
-/*
-body {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    min-width: 320px;
-    position: relative;
-    line-height: normal;
-    padding: 0;
-    margin: 0;
-    color: #333;
-    background-color: #fff;
-}
-*/
-a,
-a:hover{
-    text-decoration: none;
-    opacity: 1;
-}
-
 .subtitlewrapper{
     width: 100%;
     min-height: 60vh;
@@ -556,85 +509,7 @@ a:hover{
     justify-content: center;
 }
 
-.file-upload{
-    width: 570px;
-    height: 292px;
-    border: 1px solid #E3E4F1;
-    box-sizing: border-box;
-    border-radius: 10px;
-    padding: 0 35px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.file-upload .title{
-    display: block;
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.file-upload .input-row{
-    width: 100%;
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.file-upload .input-row input[type="text"]{
-    width: 100%;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    padding: 0 95px 0 25px;
-    background: radial-gradient(18.75px at 50% 68.75%, #FFFFFF 0%, #F9FAFD 100%), #FFFFFF;
-    border: 1px solid #E5E5F2;
-    box-sizing: border-box;
-    border-radius: 5px;
-    font-size: 18px;
-}
-
-.file-upload .input-row input[type="text"]:focus{
-    outline: none;
-}
-
-.file-upload .paste-btn{
-    width: 70px;
-    height: 40px;
-    background: #E9EBF4;
-    border-radius: 5px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.file-upload .paste-btn:hover {
-    background: #b5b6bb;
-    color: #fff;
-}
-
-.green-btn{
-    width: 100%;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(11.53deg, #77DB7B -17.6%, #57DA54 139.61%), #C4C4C4;
-    box-shadow: 0px 7px 25px rgba(33, 32, 69, 0.15);
-    border-radius: 5px;
-    font-size: 18px;
-    color: #fff;
-}
-.green-btn:hover{
-    color: #fff;
-    background: linear-gradient(11.53deg, #4bca50 -17.6%, #57DA54 139.61%), #C4C4C4;
-}
-
 /* player */
-
 .subtitlepreviewplayer {
     width: 1140px;
     height: 345px;
@@ -646,7 +521,6 @@ a:hover{
     resize: both;
     /* overflow: auto; */
 }
-
 
 .subtitlepreviewplayer.player_little {
     width: 572px;
@@ -806,9 +680,13 @@ a:hover{
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(59.59deg, #77DB7B 13.47%, #57DA54 86.53%);
+    background: #77DB7B;
+    background-image: url([[pix:atto_subtitle|e/plus-icon]]);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: linear-gradient(59.59deg, #77DB7B 13.47%, #57DA54 86.53%), #00FF00 url([[pix:atto_subtitle|e/plus-icon]]) no-repeat center;
 }
-
+/*
 .subtitlepreviewplayer .btn.add:after{
     content: '';
     display: block;
@@ -820,41 +698,8 @@ a:hover{
     -webkit-background-size: 100%;
     background-size: 100%;
 }
+*/
 
-.tooltip {
-    position: relative;
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-    visibility: hidden;
-    text-align: center;
-    padding: 8px 12px;
-    position: absolute;
-    z-index: 1;
-    background: radial-gradient(10.62px at 50% 68.75%, #FFFFFF 0%, #F9FAFD 100%), #FFFFFF;
-    border-radius: 5px;
-    width: 155px;
-    top: -43px;
-    left: -30px;
-    margin-left: -77px;
-    box-shadow: 0px 5px 12px rgba(0,0,0,.3)
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-}
-
-.tooltip .tooltiptext::after {
-    content: " ";
-    position: absolute;
-    top: 92%;
-    left: 80%;
-    margin-left: -12px;
-    border-width: 10px;
-    border-style: solid;
-    border-color: #F9FAFD transparent transparent transparent;
-}
 .subtitlepreviewplayer.player-audio {
     flex-direction: column;
 }
@@ -882,6 +727,3 @@ a:hover{
 .subtitlepreviewplayer.player-audio .progress-line {
     width: 100%;
 }
-
-/* MEDIA */
-

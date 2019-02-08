@@ -1,4 +1,7 @@
-Version 1.0.7 (Build 2018121800)'
+Version 1.0.7 (Build 2019020800)
+-CSS fixes
+
+Version 1.0.7 (Build 2018121800)
 -Fixed privacy provider implementation
 
 Version 1.0.6 Build(2018120301)
