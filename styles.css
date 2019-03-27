@@ -67,13 +67,6 @@ h1 {
 /* MAIN CSS */
 
 
-.subtitleset_container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-
 div#poodllsubtitle_loader {
     padding: 25px;
     margin: 25px 25px 0;
@@ -447,6 +440,7 @@ button#poodllsubtitle_edcancel:hover,
     justify-content: space-between;
     border-left: 1px solid #E3E4F1;
     border-top: 1px solid #E3E4F1;
+    flex-shrink: 0;
 }
 .subtitleset_container .save_and_download .save_btn {
     display: flex;
@@ -576,6 +570,7 @@ button#poodllsubtitle_edcancel:hover,
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .subtitlepreviewplayer .control-panel{
