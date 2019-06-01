@@ -43,14 +43,10 @@
     display: flex;
 }
 /* the preview subtitle line */
-/* #poodllsubtitle_previewline {
-    text-align: center;
-    color: white;
-    background-color: black;
-    width: 600px;
-    min-height: 30px;
-    margin: auto;
-} */
+div#poodllsubtitle_previewline.poodllsubtitle_previewline.text-box {
+    min-height: 41px;
+}
+
 /* the preview container */
 div#poodllsubtitle_previewbox {
     /* width: max-content; */

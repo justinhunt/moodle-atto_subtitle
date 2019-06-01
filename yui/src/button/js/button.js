@@ -32,8 +32,8 @@
  */
 var COMPONENTNAME = 'atto_subtitle';
 var SHORTNAME = 'subtitle';
-var NODE_TYPE = {LINK: 'LINK', MEDIA: 'MEDIA'};
-var MEDIA_TYPES = {LINK: 'LINK', VIDEO: 'VIDEO', AUDIO: 'AUDIO'};
+var NODE_TYPE = {LINK: 'link', MEDIA: 'media'};
+var MEDIA_TYPES = {LINK: 'link', VIDEO: 'video', AUDIO: 'audio'};
 var CSS = {
         VIDEO: 'atto_subtitle_video',
         AUDIO: 'atto_subtitle_audio',
@@ -317,8 +317,13 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             }
         };
 
+        var mediumProperties = medium ? this._getMediumProperties(medium) : false;
+        var mediatype = MEDIA_TYPES.VIDEO;
+        if(mediumProperties){
+            mediatype = mediumProperties.type;
+        }
         require(['atto_subtitle/loader'], function(loader) {
-            loader.init(host,uploadcallback,selectedURLs);
+            loader.init(host,uploadcallback,selectedURLs,mediatype);
         });
     },
 
@@ -492,7 +497,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
     _removeAndClose: function(url) {
         var updated = false;
         //if this is a media selection
-        if(STATE.selectednodetype==NODE_TYPE.MEDIA) {
+        if(STATE.selectednodetype===NODE_TYPE.MEDIA) {
             STATE.selectednode.all('track').each(function (track) {
                 if (track.getAttribute('kind') == 'captions' && !updated) {
                     track.setAttribute('src', '');

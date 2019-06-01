@@ -17,11 +17,10 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
       },
 
       initControls: function(){
-
           this.controls.videoplayer = $(constants.videoplayer);
           this.controls.audioplayer = $(constants.audioplayer);
           this.controls.root = $(constants.root);
-          if(this.mediatype==constants.mediatype_audio){
+          if(this.mediatype===constants.mediatype_audio){
               this.controls.mediaplayer = this.controls.audioplayer
           }else {
               this.controls.mediaplayer = this.controls.videoplayer
@@ -40,7 +39,7 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
               that.deactivateAll();
 
           }else{
-              if(that.activeSubtitle!=itemindex) {
+              if(that.activeSubtitle!==itemindex) {
                   that.activateSubtitle(itemindex);
               }
           }
@@ -65,28 +64,28 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
 
       setMediaURL: function(mediaurl){
         if(!mediaurl | mediaurl.trim()==''){return;}
-        var ext = mediaurl.split('.').pop().toLowerCase();
-        console.log(ext);
-        switch(ext){
-            case 'mp3':
-                if(this.mediatype==constants.mediatype_video){
-                    this.mediatype=constants.mediatype_audio;
-                    this.controls.mediaplayer.off('timeupdate');
-                    this.controls.mediaplayer = this.controls.audioplayer;
-                    this.initEvents();
-                }
+       // var ext = mediaurl.split('.').pop().toLowerCase();
+       // console.log(ext);
+        switch(this.mediatype){
+            case constants.mediatype_audio:
+                this.mediatype=constants.mediatype_audio;
+                this.controls.mediaplayer.off('timeupdate');
+                this.controls.mediaplayer = this.controls.audioplayer;
+                this.initEvents();
+
                 this.controls.root.addClass('player-audio');
                 break;
+
             default:
-                if(this.mediatype==constants.mediatype_audio){
-                    this.mediatype=constants.mediatype_video;
-                    this.controls.mediaplayer.off('timeupdate');
-                    this.controls.mediaplayer = this.controls.videoplayer;
-                    this.initEvents();
-                }
+                this.mediatype=constants.mediatype_video;
+                this.controls.mediaplayer.off('timeupdate');
+                this.controls.mediaplayer = this.controls.videoplayer;
+                this.initEvents();
+
                 this.controls.root.removeClass('player-audio');
         }
         this.controls.mediaplayer.attr("src",mediaurl);
+        this.controls.mediaplayer[0].load();
       },
 
       activateSubtitle: function(setindex){

@@ -9,7 +9,7 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
         },
 
         initControls: function(mediatype){
-            if(mediatype == constants.mediatype_video) {
+            if(mediatype === constants.mediatype_video) {
                 this.controls.mediaPlayer = $(constants.videoplayer);
             }else{
                 this.controls.mediaPlayer = $(constants.audioplayer);
@@ -37,7 +37,7 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
         },
 
         stepBack: function() {
-            var current = this.controls.videoPlayer[0].currentTime;
+            var current = this.controls.mediaPlayer[0].currentTime;
             if (current > 5) {
                 current -= 5;
             } else {
@@ -133,11 +133,21 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
 
             c.mediaPlayer.on('loadeddata', function(e) {
                 c.videoDuration = c.mediaPlayer[0].duration;
-
-                var duration = new Date(0, 0, 0, 0, 0, 0, c.videoDuration * 1000);
-                c.timeTotal.text(that.toTimeString(duration));
+                if(!isNaN(c.videoDuration) && isFinite(c.videoDuration)){
+                    var duration = new Date(0, 0, 0, 0, 0, 0, c.videoDuration * 1000);
+                    c.timeTotal.text(that.toTimeString(duration));
+                }
 
                 c.timeCurrent.text('0:00');
+            });
+
+            c.mediaPlayer.on('durationchange', function(e) {
+                debugger;
+                c.videoDuration = c.mediaPlayer[0].duration;
+                if(!isNaN(c.videoDuration) && isFinite(c.videoDuration)){
+                    var duration = new Date(0, 0, 0, 0, 0, 0, c.videoDuration * 1000);
+                    c.timeTotal.text(that.toTimeString(duration));
+                }
             });
 
             c.mediaPlayer.on('timeupdate', function (e) {

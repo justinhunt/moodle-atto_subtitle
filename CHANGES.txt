@@ -1,3 +1,9 @@
+Version 1.0.10 (Build 2019053100)
+-fixed issue where audio files were presented with video editor
+-fixed broken step-back button
+-improved title preview bar in audio editor
+-fixed issue where 'infinity' duration displayed as 'alid'
+
 Version 1.0.9 (Build 2019032700)
 -resize fixes for firefox and edge
 

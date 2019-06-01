@@ -68,18 +68,13 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
         {start: 261520, end: 275799, part: 'Los Angeles downtown'}
         ],  
 
-      init: function(host, uploadCallback, selectedURLs){
+      init: function(host, uploadCallback, selectedURLs,mediatype){
           this.host = host;
           this.uploadCallback = uploadCallback;
             this.initControls();
             this.initEvents();
-            var mediatype=constants.mediatype_video;
             if(selectedURLs.mediaurl){
                 this.mediaurl = selectedURLs.mediaurl;
-                var ext = selectedURLs.mediaurl.split('.').pop().toLowerCase();
-                if(ext == 'mp3'){
-                    mediatype=constants.mediatype_audio;
-                }
             }
 
             //poodllsubtitle.init(this.sampledata,mediatype);
