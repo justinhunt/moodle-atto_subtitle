@@ -71,16 +71,21 @@ define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "at
       init: function(host, uploadCallback, selectedURLs,mediatype){
           this.host = host;
           this.uploadCallback = uploadCallback;
-            this.initControls();
-            this.initEvents();
-            if(selectedURLs.mediaurl){
-                this.mediaurl = selectedURLs.mediaurl;
-            }
 
-            //poodllsubtitle.init(this.sampledata,mediatype);
-            poodllsubtitle.init([],mediatype);
-            this.loadMediaAndVtt(selectedURLs.mediaurl,selectedURLs.vtturl);
-           // this.runtests();
+          //if a URL was linked (ie not an html5 player) we guess the mediatype is audio if link is mp3
+          var ext = selectedURLs.mediaurl.split('.').pop().toLowerCase();
+          if(ext=='mp3'){mediatype=constants.mediatype_audio;}
+
+          this.initControls();
+          this.initEvents();
+          if(selectedURLs.mediaurl){
+                this.mediaurl = selectedURLs.mediaurl;
+          }
+
+          //poodllsubtitle.init(this.sampledata,mediatype);
+          poodllsubtitle.init([],mediatype);
+          this.loadMediaAndVtt(selectedURLs.mediaurl,selectedURLs.vtturl);
+          // this.runtests();
       },
 
       loadMediaAndVtt: function(mediaurl,vtturl){

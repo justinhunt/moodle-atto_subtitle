@@ -64,8 +64,6 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
 
       setMediaURL: function(mediaurl){
         if(!mediaurl | mediaurl.trim()==''){return;}
-       // var ext = mediaurl.split('.').pop().toLowerCase();
-       // console.log(ext);
         switch(this.mediatype){
             case constants.mediatype_audio:
                 this.mediatype=constants.mediatype_audio;
