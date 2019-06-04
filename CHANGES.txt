@@ -1,3 +1,6 @@
+Version 1.0.11 (Build 2019XXXXX) (unreleased)
+-removed unnecessary h1 style from styles.css ( https://github.com/justinhunt/moodle-atto_subtitle/issues/2 )
+
 Version 1.0.10 (Build 2019053100)
 -fixed issue where audio files were presented with video editor
 -fixed broken step-back button

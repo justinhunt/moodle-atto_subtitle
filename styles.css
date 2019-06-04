@@ -25,16 +25,15 @@
     background: linear-gradient(180deg, #ffe0e0 16.48%, #ffeded 100%), #ffe0e0;
 }
 
-.poodllsubtitle_itemcontainer.warning
-
-    /* the subtitle text-tile part field */
+ /* the subtitle text-tile part field */
 .poodllsubtitle_tt_part {
     min-height: 15px;
     margin-left: 10px;
 }
 
 /* the subtitle text-tile time fields */
-.poodllsubtitle_tt_start, .poodllsubtitle_tt_end {
+.poodllsubtitle_tt_start,
+.poodllsubtitle_tt_end {
     max-width: 150px;
 }
 
@@ -50,10 +49,6 @@ div#poodllsubtitle_previewline.poodllsubtitle_previewline.text-box {
 /* the preview container */
 div#poodllsubtitle_previewbox {
     /* width: max-content; */
-}
-
-h1 {
-    text-align: center;
 }
 
 /* FONTS CSS */
