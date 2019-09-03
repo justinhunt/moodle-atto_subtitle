@@ -4,8 +4,8 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
         controls: {},
 
         init: function(mediatype){
-           this.initControls(mediatype);
-           this.registerEvents();
+            this.initControls(mediatype);
+            this.registerEvents();
         },
 
         initControls: function(mediatype){
@@ -21,7 +21,7 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
             this.controls.progressLine = $(constants.progressline);
             this.controls.greenProgress = $(constants.greenprogress);
             this.controls.progressMarker = $(constants.progressmarker);
-            this.controls.videoDuration = 0;
+            this.controls.mediaDuration = 0;
             this.controls.timeTotal = $(constants.timetotal);
             this.controls.timeCurrent = $(constants.timecurrent);
         },
@@ -73,9 +73,9 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
 
             c.playBtn.click(function(e) {
                 e.preventDefault();
-                var videoState = c.mediaPlayer[0].readyState;
+                var readyState = c.mediaPlayer[0].readyState;
 
-                if (videoState == '4') {
+                if (readyState == '4') {
                     if (c.playBtn.hasClass('active')) {
                         c.mediaPlayer[0].pause();
                     } else {
@@ -120,58 +120,66 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
                     {
                         left: progressCurrent + '%',
                         opacity: 1
-
                     }
                 );
 
-                c.mediaPlayer[0].currentTime = c.videoDuration * positionRatio;
+                c.mediaPlayer[0].currentTime = c.mediaDuration * positionRatio;
 
-                var durationCurrent = new Date(0, 0, 0, 0, 0, 0, c.videoDuration * positionRatio * 1000);
+                var durationCurrent = new Date(0, 0, 0, 0, 0, 0, c.mediaDuration * positionRatio * 1000);
                 c.timeCurrent.text(that.toTimeString(durationCurrent));
 
             });
 
             c.mediaPlayer.on('loadeddata', function(e) {
-                c.videoDuration = c.mediaPlayer[0].duration;
-                if(!isNaN(c.videoDuration) && isFinite(c.videoDuration)){
-                    var duration = new Date(0, 0, 0, 0, 0, 0, c.videoDuration * 1000);
+                c.mediaDuration = c.mediaPlayer[0].duration;
+                if(!isNaN(c.mediaDuration) && isFinite(c.mediaDuration)){
+                    var duration = new Date(0, 0, 0, 0, 0, 0, c.mediaDuration * 1000);
                     c.timeTotal.text(that.toTimeString(duration));
                 }
 
                 c.timeCurrent.text('0:00');
+
+                //init progress marker
+                c.progressMarker.css(
+                    {
+                        left: '0%',
+                        opacity: 1
+                    }
+                );
+
+                //add the timeupdate event. If you add this before now, it fails cos no media was loaded
+                c.mediaPlayer.on('timeupdate', function (ex) {
+                    // Update progress bar
+                    var video = c.mediaPlayer[0];
+                    var durationRatio = video.currentTime / video.duration;
+                    var leftPosition = durationRatio * 100 + '%';
+
+                    c.greenProgress.width(leftPosition);
+                    c.progressMarker.css(
+                        {
+                            left: leftPosition,
+                            opacity: 1
+
+                        }
+                    );
+
+                    // Update playback duration
+                    var currentTime = new Date(0, 0, 0, 0, 0, 0, video.currentTime * 1000);
+                    currentTime = that.toTimeString(currentTime);
+                    c.timeCurrent.text(currentTime);
+
+                });
             });
 
             c.mediaPlayer.on('durationchange', function(e) {
-                debugger;
-                c.videoDuration = c.mediaPlayer[0].duration;
-                if(!isNaN(c.videoDuration) && isFinite(c.videoDuration)){
-                    var duration = new Date(0, 0, 0, 0, 0, 0, c.videoDuration * 1000);
+                c.mediaDuration = c.mediaPlayer[0].duration;
+                if(!isNaN(c.mediaDuration) && isFinite(c.mediaDuration)){
+                    var duration = new Date(0, 0, 0, 0, 0, 0, c.mediaDuration * 1000);
                     c.timeTotal.text(that.toTimeString(duration));
                 }
             });
 
-            c.mediaPlayer.on('timeupdate', function (e) {
 
-                // Update progress bar
-                var video = c.mediaPlayer[0];
-                var durationRatio = video.currentTime / video.duration;
-                var leftPosition = durationRatio * 100 + '%';
-
-                c.greenProgress.width(leftPosition);
-                c.progressMarker.css(
-                    {
-                        left: leftPosition,
-                        opacity: 1
-
-                    }
-                );
-
-                // Update playback duration
-                var currentTime = new Date(0, 0, 0, 0, 0, 0, video.currentTime * 1000);
-                currentTime = that.toTimeString(currentTime);
-                c.timeCurrent.text(currentTime);
-
-            });
 
             var sliderElem = c.progressLine[0];
             var thumbElem = c.progressMarker[0];
@@ -195,9 +203,9 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
                     thumbElem.style.left = newLeft + 'px';
                     c.greenProgress.width(newLeft + 'px');
 
-                    c.mediaPlayer[0].currentTime = c.videoDuration * (newLeft / rightEdge);
+                    c.mediaPlayer[0].currentTime = c.mediaDuration * (newLeft / rightEdge);
 
-                    var durationCurrent = new Date(0, 0, 0, 0, 0, 0, c.videoDuration * (newLeft / rightEdge) * 1000);
+                    var durationCurrent = new Date(0, 0, 0, 0, 0, 0, c.mediaDuration * (newLeft / rightEdge) * 1000);
                     c.timeCurrent.text(that.toTimeString(durationCurrent));
 
                 }
@@ -213,6 +221,6 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
             };
 
         }//end of register events
-}//end of returned object
+    }//end of returned object
 
 });

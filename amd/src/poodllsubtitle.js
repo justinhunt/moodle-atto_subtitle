@@ -1,4 +1,5 @@
-define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_subtitle/previewhelper","atto_subtitle/playerhelper"], function($, constants, vtthelper, subtitleset, previewhelper, playerhelper) {
+define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_subtitle/previewhelper","atto_subtitle/playerhelper","core/templates"],
+    function($, constants, vtthelper, subtitleset, previewhelper, playerhelper, templates) {
 
     //pooodllsubtitle helper is about the subtitle tiles and editing
 
@@ -47,27 +48,38 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
       },
 
       restoreTile: function(){
-         var item = subtitleset.fetchItem(this.currentindex);
-         var newtile = this.fetchNewTextTile(this.currentindex,item.start,item.end,item.part);
-          this.hideEditor();
-          this.currentitemcontainer.append(newtile);
+          var item = subtitleset.fetchItem(this.currentindex);
+          var that=this;
+
+          var onend = function(tile){
+              that.hideEditor();
+              that.currentitemcontainer.append(tile);
+          };
+          this.fetchNewTextTile(this.currentindex,item.start,item.end,item.part, onend);
       },
 
-      editorToTile: function(){
-          var starttime = vtthelper.timeString2ms($(this.controls.edstart).val());
-          var endtime = vtthelper.timeString2ms($(this.controls.edend).val());
-          var validtimes = this.validateTimes(this.currentindex,starttime,endtime);
+      editorToTile: function(controls,currentindex,currentitemcontainer, onend){
+          var starttime = vtthelper.timeString2ms($(controls.edstart).val());
+          var endtime = vtthelper.timeString2ms($(controls.edend).val());
+          var validtimes = this.validateTimes(currentindex,starttime,endtime);
           if(!validtimes){
-              $(this.currentitemcontainer).addClass('warning');
+              $(currentitemcontainer).addClass('warning');
               return false;
           }
-          var part = $(this.controls.edpart).val();
-          subtitleset.updateItem(this.currentindex,starttime,endtime,part);
-          var updatedTile = this.fetchNewTextTile(this.currentindex,starttime,endtime,part);
-          this.hideEditor();
-          this.currentitemcontainer.append(updatedTile);
+          var part = $(controls.edpart).val();
+          subtitleset.updateItem(currentindex,starttime,endtime,part);
 
-          $(this.currentitemcontainer).removeClass('warning');
+          var that = this;
+          var on_fetch_finish = function(tile){
+              that.hideEditor();
+              currentitemcontainer.append(tile);
+              $(currentitemcontainer).removeClass('warning');
+              if(onend){
+                  onend();
+              }
+          };
+          this.fetchNewTextTile(currentindex,starttime,endtime,part, on_fetch_finish);
+
           return true;
       },
 
@@ -77,19 +89,26 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
           //this attaches event to classes of poodllsubtitle_tt in "container"
           //so new items(created at runtime) get events by default
           this.controls.container.on("click",'.poodllsubtitle_tt',function(){
+
               var newindex = parseInt($(this).parent().attr('data-id'));
-              //save current
-              if(that.editoropen == true){
-                  that.editorToTile(that.controls,that.currentindex,that.currentitemcontainer);
+              var theparent = $(this).parent();
+              var do_next_tile_edit = function(){
+                  that.currentindex = newindex;
+                  that.currentitemcontainer = theparent;
+                  that.shiftEditor(that.currentindex ,that.currentitemcontainer);
+                  previewhelper.setPosition(that.currentindex);
               }
-              that.currentindex = newindex;
-              that.currentitemcontainer = $(this).parent();
-              that.shiftEditor(that.currentindex ,that.currentitemcontainer);
-              previewhelper.setPosition(that.currentindex);
+              //save current
+              if(that.editoropen === true){
+                  that.editorToTile(that.controls,that.currentindex,that.currentitemcontainer, do_next_tile_edit);
+              }else{
+                  do_next_tile_edit();
+              }
+
            });
 
           //editor button delete tile click event
-          this.controls.buttondelete.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONDELETE,function(){
               result = confirm('Warning! This tile is going to be deleted!');
               if (result) {
                 that.restoreTile();
@@ -103,59 +122,68 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
           });
 
           //editor button merge with prev tile click event
-          this.controls.buttonmergeup.click(function(){
-              that.editorToTile();
-              subtitleset.mergeUp(that.currentindex);
-              that.syncFrom(that.currentindex-1);
-              previewhelper.setPosition(that.currentindex-1);
+          this.controls.container.on("click", constants.C_BUTTONMERGEUP,function(){
+              var onend = function() {
+                  subtitleset.mergeUp(that.currentindex);
+                  that.syncFrom(that.currentindex - 1);
+                  previewhelper.setPosition(that.currentindex - 1);
+              };
+              that.editorToTile(that.controls,that.currentindex,that.currentitemcontainer, onend);
+
           });
 
           //editor button split current tile click event
-          this.controls.buttonsplit.click(function(){
-              that.editorToTile();
-              subtitleset.split(that.currentindex);
-              that.syncFrom(that.currentindex);
-              previewhelper.updateLabel();
+          this.controls.container.on("click",constants.C_BUTTONSPLIT,function(){
+              var onend = function() {
+                  subtitleset.split(that.currentindex);
+                  that.syncFrom(that.currentindex);
+                  previewhelper.updateLabel();
+              };
+              that.editorToTile(that.controls,that.currentindex,that.currentitemcontainer, onend);
+
           });
 
           //editor button apply changesclick event
-          this.controls.buttonapply.click(function(){
-              that.editorToTile();
-              previewhelper.updateLabel();
+          this.controls.container.on("click",constants.C_BUTTONAPPLY,function(){
+              var onend = function() {
+                  previewhelper.updateLabel();
+              };
+              that.editorToTile(that.controls,that.currentindex,that.currentitemcontainer, onend);
+
           });
 
           //editor button cancel changes click event
-          this.controls.buttoncancel.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONCANCEL,function(){
               that.restoreTile();
           });
 
           //editor set current preview time to start
-          this.controls.buttonstartsetnow.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONSTARTSETNOW,function(){
               var time = previewhelper.fetchCurrentTime();
               var displaytime = vtthelper.ms2TimeString(time);
               that.controls.edstart.val(displaytime);
           });
 
           //editor set current preview time to end
-          this.controls.buttonendsetnow.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONENDSETNOW,function(){
               var time = previewhelper.fetchCurrentTime();
               var displaytime = vtthelper.ms2TimeString(time);
               that.controls.edend.val(displaytime);
           });
 
           //editor bump start time up or down
-          this.controls.buttonstartbumpup.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONSTARTBUMPUP,function(){
               that.doBump(that.controls.edstart,constants.bumpinterval);
           });
-          this.controls.buttonstartbumpdown.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONSTARTBUMPDOWN,function(){
               that.doBump(that.controls.edstart,(-1*constants.bumpinterval));
           });
 
           //editor bump end time up or down
-          this.controls.buttonendbumpup.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONENDBUMPUP,function(){
               that.doBump(that.controls.edend,constants.bumpinterval);
           });
-          this.controls.buttonendbumpdown.click(function(){
+          this.controls.container.on("click",constants.C_BUTTONENDBUMPDOWN,function(){
               that.doBump(that.controls.edend,(-1*constants.bumpinterval));
           });
 
@@ -181,8 +209,9 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
               }
               var newend = newstart + 2000;
               subtitleset.addItem(newdataid,newstart,newend,'');
-              var newtile = that.fetchNewTextTileContainer(newdataid,newstart,newend,'');
-              that.controls.container.append(newtile);
+
+              var onend = function(newtile){that.controls.container.append(newtile);};
+              var newtile = that.fetchNewTextTileContainer(newdataid,newstart,newend,'',onend);
           });
 
           //set callbacks for video events we are interested in
@@ -208,13 +237,24 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
           var container = this.controls.container;
           var that = this;
           var setcount = subtitleset.fetchCount();
-          if(setcount>0){
-              for(var setindex=0; setindex < setcount;setindex++){
-                  var item = subtitleset.fetchItem(setindex);
-                  var newtile = that.fetchNewTextTileContainer(setindex,item.start,item.end, item.part);
-                  container.append(newtile);
-              };//end of for loop
-          }//end of if setcount
+
+
+          //the first render of template takes time and puts the first tile rendered after subsequent tiles,
+          // a better way might be force the order but for now we force an empty first render, and set reallyInitTiles to run after that
+          var reallyInitTiles = function() {
+              if (setcount > 0) {
+                  for (var setindex = 0; setindex < setcount; setindex++) {
+                      var item = subtitleset.fetchItem(setindex);
+                      var onend = function (newtile) {
+                          container.append(newtile);
+                      };
+                      var newtile = that.fetchNewTextTileContainer(setindex,item.start,item.end, item.part, onend);
+                  }
+                  ;//end of for loop
+              }//end of if setcount
+          };
+          this.fetchNewTextTile(0,0,0,'',reallyInitTiles);
+
       },
 
       //make sure that the times we got back from the editor are sensible
@@ -279,62 +319,36 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
       },
 
       //Merge a template text tile,  with the time and subtitle text data
-      fetchNewTextTile: function(dataid, start, end, part){
-          var imgpath = M.cfg.wwwroot + '/lib/editor/atto/plugins/subtitle/pix/e/';
+      fetchNewTextTile: function(dataid, start, end, part, onend){
+          var tdata=[];
+          tdata['imgpath'] = M.cfg.wwwroot + '/lib/editor/atto/plugins/subtitle/pix/e/';
+          tdata['start'] = vtthelper.ms2TimeString(start);
+          tdata['end'] = vtthelper.ms2TimeString(end);
+          tdata['dataid'] = dataid+1;
+          tdata['part'] = part;
 
-          var template = "<div class='poodllsubtitle_tt subtitleset_block'>";
-                template += "<div class='numb_song'>@@dataid@@</div>";
-                template += "<div class='subtitleset_time'>";
-                template += "<div class='block_input'>";
-                template += "<input type='text' name='name' value='@@start@@' readonly class='poodllsubtitle_tt_start'/>";
-                template += "<div class='input_arr_block'>";
-                template += "<div class='input_arr input_arr_top'></div>";
-                template += "<div class='input_arr input_arr_bot'></div>";
-                template += "</div>";
-                template += "</div>";
-                template += "<a href='#' class='now_btn'>Now</a>";
-                template += "<div class='block_input'>";
-                template += "<input type='text' name='name' value='@@end@@' readonly class='poodllsubtitle_tt_end'/>";
-                template += "<div class='input_arr_block'>";
-                template += "<div class='input_arr input_arr_top'></div>";
-                template += "<div class='input_arr input_arr_bot'></div>";
-                template += "</div>";
-                template += "</div>";
-                template += "<a href='#' class='now_btn'>Now</a>";
-                template += "</div>";
-                template += "<div class='subtitleset_text'>";
-                template += "<div class='textarea poodllsubtitle_tt_part'>@@part@@</div>";
-                template += "</div>";
-                template += "<div class='subtitleset_btns'>";
-                template += "<div class='subs_btn_block subs_basket'>";
-                template += "<img src='" + imgpath + "btn_ic_1.svg'/>";
-                template += "</div>";
-                template += "<div class='subs_btn_block subs_btn_menu'></div>";
-                template += "<div class='subs_btn_block'>";
-                template += "<img src='" + imgpath + "btn_ic_2.svg'/>";
-                template += "</div>";
-                template += "<div class='subs_btn_block'>";
-                template += "<img src='" + imgpath + "btn_ic_3.svg'/>";
-                template += "</div>";
-                template += "</div>";
-
-              template += "</div>";// end of tt
-          var startstring = vtthelper.ms2TimeString(start);
-          var endstring = vtthelper.ms2TimeString(end);
-          return template
-            .replace('@@start@@',startstring)
-            .replace('@@end@@',endstring)
-            .replace('@@part@@',part)
-            .replace('@@dataid@@', dataid + 1);
+          templates.render('atto_subtitle/subtitletile',tdata).then(
+              function(html,js){
+                  onend(html);
+              }
+          );
       },
 
       //Merge a template text tile,  with the time and subtitle text data
-      fetchNewTextTileContainer: function(dataid,start, end, part){
-          var tile = this.fetchNewTextTile(dataid, start,end,part);
-          var template = "<div data-id='@@dataid@@' class='poodllsubtitle_itemcontainer'>";
-          template += tile;
-          template +="</div>";
-          return template.replace('@@dataid@@',dataid);
+      fetchNewTextTileContainer: function(dataid,start, end, part, onend){
+          var tdata=[];
+          tdata['imgpath'] = M.cfg.wwwroot + '/lib/editor/atto/plugins/subtitle/pix/e/';
+          tdata['start'] = vtthelper.ms2TimeString(start);
+          tdata['end'] = vtthelper.ms2TimeString(end);
+          tdata['outerdataid'] = dataid;
+          tdata['dataid'] = dataid+1;
+          tdata['part'] = part;
+
+          templates.render('atto_subtitle/subtitletilecontainer',tdata).then(
+              function(html,js){
+                  onend(html);
+              }
+          );
       },
 
       clearTiles: function(){
@@ -350,6 +364,7 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
 
       syncFrom: function(index){
           var setcount = subtitleset.fetchCount();
+          var that =this;
           for(var setindex=index; setindex < setcount;setindex++){
               var item =subtitleset.fetchItem(setindex);
               var container = $('.poodllsubtitle_itemcontainer').filter(function() {
@@ -358,8 +373,8 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
               if(container.length > 0){
                   this.updateTextTile(container,item);
               }else{
-                  var newtile = this.fetchNewTextTileContainer(setindex,item.start,item.end,item.part);
-                  this.controls.container.append(newtile);
+                  var onend = function(newtile){that.controls.container.append(newtile);};
+                  var newtile = this.fetchNewTextTileContainer(setindex,item.start,item.end,item.part,onend);
               }
           }
           //remove any elements greater than the last data-id

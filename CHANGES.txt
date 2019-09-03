@@ -1,5 +1,8 @@
-Version 1.0.11 (Build 2019XXXXX) (unreleased)
+Version 1.0.11 (Build 2019090200)
 -removed unnecessary h1 style from styles.css ( https://github.com/justinhunt/moodle-atto_subtitle/issues/2 )
+-fixed issue where preview player progress bar was not responding to events
+-Fixed issue where events stopped triggering after removing the last subtitle and adding a new one
+-Moved to using Mustache templates for tile and html generation
 
 Version 1.0.10 (Build 2019053100)
 -fixed issue where audio files were presented with video editor

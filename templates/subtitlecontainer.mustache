@@ -1,0 +1,35 @@
+<div class="subtitlewrapper">
+    <div class="subtitlepreviewplayer" id="root">
+        <div id="poodllsubtitle_previewbox" class="poodllsubtitle_previewbox top-box">
+            <audio id="poodllsubtitle_audio" class="poodllsubtitle_audio" width="100%" style="display: none"></audio>
+            <div id="poodllsubtitle_previewline"  class="poodllsubtitle_previewline text-box"></div>
+        </div>
+
+        <div class="bottom-box">
+            <div class="control-panel">
+                <div class="preview-progress-bar">
+                    <span class="time time-current">0:00</span>
+                    <div class="progress-line">
+                        <span class="green-progress"></span>
+                        <span class="progress-marker"></span>
+                    </div>
+                    <span class="time time-total">0:00</span>
+                </div>
+                <div class="buttons-group">
+                    <a id="poodllsubtitle_addnew" class="poodllsubtitle_addnew btn add" title="{{#str}}addnew, atto_subtitle{{/str}}"></a>
+                    <a class="btn prev" id="btn_prev" title="{{#str}}stepback, atto_subtitle{{/str}}"></a>
+                    <a class="btn play" id="btn_play" title="{{#str}}playpause, atto_subtitle{{/str}}"></a>
+                    <a class="btn next" id="btn_next" title="{{#str}}stepahead, atto_subtitle{{/str}}"></a>
+                </div>
+            </div>
+            <div class="subtitleset_container">
+                <div id='poodllsubtitle_tiles' class='poodllsubtitle_tiles subtitleset_list'></div>
+                <div class="save_and_download">
+                    <a class="save_btn" href="#" id="poodllsubtitle_save">{{#str}}savesubtitles, atto_subtitle{{/str}}</a>
+                    <a class="cancel_btn" href="#" id="poodllsubtitle_removeall" title="{{#str}}removesubtitles, atto_subtitle{{/str}}"></a>
+                </div>
+            </div>
+        </div>
+        {{> atto_subtitle/subtitleeditbox}}
+    </div>
+</div>

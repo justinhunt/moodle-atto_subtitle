@@ -22,7 +22,20 @@ define(["jquery"], function($) {
         savebutton: '#poodllsubtitle_save',
         removeallbutton: '#poodllsubtitle_removeall',
         bumpinterval: 500,
-        component: 'atto_subtitle'
+        component: 'atto_subtitle',
+
+    C_BUTTONDELETE: "#poodllsubtitle_eddelete",
+    C_BUTTONMERGEUP: "#poodllsubtitle_edmergeup",
+    C_BUTTONSPLIT: "#poodllsubtitle_edsplit",
+    C_BUTTONAPPLY: "#poodllsubtitle_edapply",
+    C_BUTTONCANCEL: "#poodllsubtitle_edcancel",
+
+    C_BUTTONSTARTSETNOW: "#poodllsubtitle_startsetnow",
+    C_BUTTONENDSETNOW: "#poodllsubtitle_endsetnow",
+    C_BUTTONSTARTBUMPUP: "#poodllsubtitle_startbumpup",
+    C_BUTTONSTARTBUMPDOWN: "#poodllsubtitle_startbumpdown",
+    C_BUTTONENDBUMPUP: "#poodllsubtitle_endbumpup",
+    C_BUTTONENDBUMPDOWN: "#poodllsubtitle_endbumpdown"
     }
 
 });
