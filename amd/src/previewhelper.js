@@ -63,7 +63,7 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
       },
 
       setMediaURL: function(mediaurl){
-        if(!mediaurl | mediaurl.trim()==''){return;}
+        if(!mediaurl | mediaurl.length<1){return;}
         switch(this.mediatype){
             case constants.mediatype_audio:
                 this.mediatype=constants.mediatype_audio;
@@ -82,7 +82,13 @@ define(["jquery","atto_subtitle/constants"], function($, constants) {
 
                 this.controls.root.removeClass('player-audio');
         }
-        this.controls.mediaplayer.attr("src",mediaurl);
+        for(var i=0;i<mediaurl.length;i++) {
+            //TO DO ideally we would specify the mime type here eg  type="audio/webm",
+            // but its a bit hard to know from file extension
+            var newtrack = '<source src="' + mediaurl[i] + '">';
+            //we prepend because we seem to get better time stamps off mp3/mp4 so we put those first
+            this.controls.mediaplayer.prepend(newtrack);
+        }
         this.controls.mediaplayer[0].load();
       },
 

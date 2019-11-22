@@ -76,13 +76,13 @@ define(["jquery", "atto_subtitle/constants"], function($, constants) {
                 var readyState = c.mediaPlayer[0].readyState;
 
                 if (readyState == '4') {
-                    if (c.playBtn.hasClass('active')) {
+                    if (c.playBtn.hasClass('playing')) {
                         c.mediaPlayer[0].pause();
                     } else {
                         c.mediaPlayer[0].play();
                     }
 
-                    c.playBtn.toggleClass('active');
+                    c.playBtn.toggleClass('playing');
                 } else {
                     alert('No media..');
                 }

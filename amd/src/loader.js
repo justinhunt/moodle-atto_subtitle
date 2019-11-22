@@ -76,7 +76,7 @@ define(["jquery", "atto_subtitle/constants",
           this.uploadCallback = uploadCallback;
 
           //if a URL was linked (ie not an html5 player) we guess the mediatype is audio if link is mp3
-          var ext = selectedURLs.mediaurl.split('.').pop().toLowerCase();
+          var ext = selectedURLs.mediaurl[0].split('.').pop().toLowerCase();
           if(ext=='mp3'){mediatype=constants.mediatype_audio;}
 
           this.initControls();
@@ -92,7 +92,7 @@ define(["jquery", "atto_subtitle/constants",
       },
 
       loadMediaAndVtt: function(mediaurl,vtturl){
-          if(mediaurl && mediaurl != ''){
+          if(mediaurl && mediaurl.length >0){
               previewhelper.setMediaURL(mediaurl);
           }
           if(vtturl && vtturl != ''){
@@ -153,7 +153,7 @@ define(["jquery", "atto_subtitle/constants",
       },
 
       fetch_filename: function(url) {
-          url=encodeURIComponent(url);
+          url=decodeURIComponent(url);
           url = url.substring(0, (url.indexOf("#") == -1) ? url.length : url.indexOf("#"));
           url = url.substring(0, (url.indexOf("?") == -1) ? url.length : url.indexOf("?"));
           var filename = url.substring(url.lastIndexOf("/") + 1, url.length);

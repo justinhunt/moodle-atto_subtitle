@@ -52,7 +52,7 @@ var STATE ={
     subtitling: false,
     selectednode: false,
     selectednodetype: false,
-    mediaurl: false,
+    mediaurl: [],
     fullurl: false
 };
 
@@ -313,7 +313,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
                     } else {
                         //ouch that didn't work .. lets download so the user doesn't lose all their work
                         alert(M.util.get_string('uploadproblem', COMPONENTNAME));
-                        loader.do_download();
+                        that.loader.do_download();
                     }
                     break;
                 case 'remove-subtitles':
@@ -331,6 +331,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             mediatype = mediumProperties.type;
         }
         require(['atto_subtitle/loader'], function(loader) {
+            that.loader = loader;
             loader.init(host,uploadcallback,selectedURLs,mediatype);
         });
     },
@@ -346,16 +347,16 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
 
 
         //Search for Media tags
-        var urls = {mediaurl: false, vtturl: false, fullurl: false};
+        var urls = {mediaurl: [], vtturl: false, fullurl: false};
         var mediumProperties = medium ? this._getMediumProperties(medium) : false;
 
         if(mediumProperties){
             if(mediumProperties.sources && mediumProperties.sources.length > 0) {
-                urls.mediaurl = mediumProperties.sources[0];
+                urls.mediaurl = mediumProperties.sources;
             }else{
-                urls.mediaurl = mediumProperties.src;
+                urls.mediaurl[0] = mediumProperties.src;
             }
-            urls.fullurl = urls.mediaurl;
+            urls.fullurl = urls.mediaurl[0];
             if(mediumProperties.tracks && 'captions' in mediumProperties.tracks && mediumProperties.tracks['captions'].length > 0 ) {
                 urls.vtturl = mediumProperties.tracks['captions'][0].src;
             }
@@ -421,7 +422,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
         var selectednode = this.get('host').getSelectionParentNode();
         var anchornodes = null;
         var anchornode = null;
-        var urls = {mediaurl: false, vtturl: false, fullurl: false};
+        var urls = {mediaurl: [], vtturl: false, fullurl: false};
 
 
         // Note this is a document fragment and YUI doesn't like them.
@@ -434,14 +435,14 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
             anchornode = anchornodes[0];
             STATE.selectednode = anchornode;
             urls.fullurl = anchornode.getAttribute('href');
-            urls.mediaurl=urls.fullurl;
+            urls.mediaurl[0]=urls.fullurl;
 
             if(urls.fullurl!=""){
                 var tempurl = new URL(urls.fullurl);
                 var urlParams = new URLSearchParams(tempurl.search);
                 if(urlParams) {
                     urls.vtturl = urlParams.get('data-subtitles');
-                    urls.mediaurl=urls.fullurl.replace(tempurl.search,'');
+                    urls.mediaurl[0]=urls.fullurl.replace(tempurl.search,'');
                 }
             }
         }
