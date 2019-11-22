@@ -1,5 +1,6 @@
-define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subtitle/subtitleset","atto_subtitle/previewhelper","atto_subtitle/playerhelper","core/templates"],
-    function($, constants, vtthelper, subtitleset, previewhelper, playerhelper, templates) {
+define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subtitle/subtitleset",
+        "atto_subtitle/previewhelper","atto_subtitle/playerhelper","core/templates", "atto_subtitle/dlg_actions"],
+    function($, constants, vtthelper, subtitleset, previewhelper, playerhelper, templates,actionsdialog) {
 
     //pooodllsubtitle helper is about the subtitle tiles and editing
 
@@ -15,8 +16,10 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
           previewhelper.init(subtitleset,mediatype);
           playerhelper.init(mediatype);
           this.initControls();
+          this.initDialog();
           this.initTiles();
           this.initEvents();
+
       },
 
       //set up our internal references to the elements on the page
@@ -39,6 +42,19 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
           this.controls.buttonstartbumpdown = $("#poodllsubtitle_startbumpdown");
           this.controls.buttonendbumpup = $("#poodllsubtitle_endbumpup");
           this.controls.buttonendbumpdown = $("#poodllsubtitle_endbumpdown");
+          this.controls.buttonactions = $(constants.actionsbutton);
+          this.controls.actionsdialog = $("#poodllsubtitle_dialogue_box_actions");
+      },
+
+      //set up our internal references to the elements on the page
+      initDialog: function() {
+          var that=this;
+          actionsdialog.set_dialogue_box(this.controls.actionsdialog);
+          templates.render('atto_subtitle/subtitleexportimport',{}).then(
+              function(html,js){
+                  actionsdialog.setContent(html, that);
+              }
+          );
       },
 
       hideEditor: function(){
@@ -212,6 +228,11 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
 
               var onend = function(newtile){that.controls.container.append(newtile);};
               var newtile = that.fetchNewTextTileContainer(newdataid,newstart,newend,'',onend);
+          });
+
+          //Actions button click event
+          this.controls.buttonactions.click(function() {
+                actionsdialog.open();
           });
 
           //set callbacks for video events we are interested in

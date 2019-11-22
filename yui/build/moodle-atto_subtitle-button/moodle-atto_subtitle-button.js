@@ -58,7 +58,9 @@ var STATE ={
     fullurl: false
 };
 
+
 var TEMPLATES = {
+    /*
         ROOT: '' +
             '<div class="subtitlewrapper">\n' +
         '\n' +
@@ -69,7 +71,7 @@ var TEMPLATES = {
         '                <div id="poodllsubtitle_previewbox" class="poodllsubtitle_previewbox top-box">\n' +
         '                    <video id="poodllsubtitle_video" class="poodllsubtitle_video" width="100%" style="display: none"></video>\n' +
         '                    <audio id="poodllsubtitle_audio" class="poodllsubtitle_audio" width="100%" style="display: none"></audio>\n' +
-        '                    <div id="poodllsubtitle_previewline"  class="poodllsubtitle_previewline text-box"></div>\n' +
+        '                    <div id="poodllsubtitle_previewline" class="poodllsubtitle_previewline text-box"></div>\n' +
         '                </div>\n' +
         '\n' +
         '                <div class="bottom-box">\n' +
@@ -87,6 +89,7 @@ var TEMPLATES = {
         '                            <a class="btn prev" id="btn_prev" title="{{get_string "stepback" component}}"></a>\n' +
         '                            <a class="btn play" id="btn_play" title="{{get_string "playpause" component}}"></a>\n' +
         '                            <a class="btn next" id="btn_next" title="{{get_string "stepahead" component}}"></a>\n' +
+        '                            <a class="btn ps_actions" id="btn_ps_actions" title="{{#str}}actions, atto_subtitle{{/str}}"></a>\n' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                    <div class="subtitleset_container">\n' +
@@ -138,6 +141,7 @@ var TEMPLATES = {
         '\n' +
         '            </div>\n' +
         '        </div>',
+        */
         HTML_MEDIA: {
             VIDEO: '' +
             '&nbsp;<video ' +
@@ -189,6 +193,10 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
                     tagMatchRequiresAll: false
                 });
             }
+
+            //add template def from Mustache set in lib.php
+           TEMPLATES.ROOT = config.templates_root;
+           TEMPLATES.DIALOG = config.templates_dialog;
     },
 
     /**
@@ -490,7 +498,7 @@ Y.namespace('M.atto_subtitle').Button = Y.Base.create('button', Y.M.editor_atto.
      */
     _getDialogueContent: function(selection) {
         var content = Y.Node.create(
-            Y.Handlebars.compile(TEMPLATES.ROOT)(this._getContext())
+            Y.Handlebars.compile(TEMPLATES.ROOT + TEMPLATES.DIALOG)(this._getContext())
         );
         return content;
     },

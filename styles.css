@@ -662,6 +662,12 @@ button#poodllsubtitle_edcancel:hover,
     background-size: 18px;
 }
 
+ .subtitlepreviewplayer .btn.ps_actions{
+     background-image: url([[pix:atto_subtitle|e/settings-icon]]);
+     -webkit-background-size: 18px;
+     background-size: 18px;
+ }
+
 .subtitlepreviewplayer .btn.add{
     display: flex;
     align-items: center;
@@ -712,4 +718,83 @@ button#poodllsubtitle_edcancel:hover,
 .subtitlepreviewplayer.player-audio .preview-progress-bar,
 .subtitlepreviewplayer.player-audio .progress-line {
     width: 100%;
+}
+/* dialogue actions sildeout */
+.poodllsubtitle_dialogue_box .devicesettings_select{
+    text-align: left;
+}
+.poodllsubtitle_dialogue_box .select_settings_video{
+    width: 100%;
+    padding: 10px;
+}
+.devicesettings_select span{
+    margin-left: 5px;
+}
+.devicesettings_select .select_settings_audio{
+    width: 100%;
+    padding: 10px;
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+.select_settings_audio option{
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: 100%!important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+.poodllsubtitle_close_modal{
+    text-align: right;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+.poodllsubtitle_close_modal i{
+    font-size: 21px;
+    color: #333;
+}
+.poodllsubtitle_dialogue_box{
+    border: 1px solid #333;
+    height: 20px;
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    height: 100%;
+    top: 0px;
+    z-index: 999999;
+    background: #e6e8ed;
+}
+.poodllsubtitle_dialogue_box .poodllsubtitle_dialogue_content{
+    padding: 3px;
+    text-align: center;
+    background: #333;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.poodllsubtitle_dialogue_box .poodllsubtitle_dialogue_content h6{
+    margin-bottom: 0px;
+}
+
+
+.poodllsubtitle_dragdropsquare {
+    width: 250px;
+    line-height: 25px;
+    text-align: center;
+    border-radius: 5px;
+    color: #73AD21;
+    border: 1px solid #73AD21;
+    padding: 1px 1px 1px 1px;
+    background-color: #CBF2DC;
+    margin: auto;
+}
+
+div.poodllsubtitle_dragging {
+    border: 2px dashed #0000FF;
 }

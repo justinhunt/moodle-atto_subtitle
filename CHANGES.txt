@@ -1,3 +1,6 @@
+Version 1.0.12 (Build 2019112100)
+-added upload/download subtitles
+
 Version 1.0.11 (Build 2019090200)
 -removed unnecessary h1 style from styles.css ( https://github.com/justinhunt/moodle-atto_subtitle/issues/2 )
 -fixed issue where preview player progress bar was not responding to events

@@ -6,6 +6,7 @@ define(["jquery"], function($) {
         playbutton: '#btn_play',
         prevbutton: '#btn_prev',
         nextbutton: '#btn_next',
+        actionsbutton: '#btn_ps_actions',
         progressbar: '.preview-progress-bar',
         progressline: '.progress-line',
         previewline: '#poodllsubtitle_previewline',

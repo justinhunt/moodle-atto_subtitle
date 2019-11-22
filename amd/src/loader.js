@@ -1,4 +1,7 @@
-define(["jquery", "atto_subtitle/constants", "atto_subtitle/poodllsubtitle", "atto_subtitle/vtthelper","atto_subtitle/previewhelper","atto_subtitle/uploader"], function($, constants, poodllsubtitle, vtthelper, previewhelper, uploader) {
+define(["jquery", "atto_subtitle/constants",
+    "atto_subtitle/poodllsubtitle", "atto_subtitle/vtthelper",
+    "atto_subtitle/previewhelper","atto_subtitle/uploader"],
+    function($, constants, poodllsubtitle, vtthelper, previewhelper, uploader) {
 
     //Video helper is manipulating the video and passing on video events and info to other parts of app
 

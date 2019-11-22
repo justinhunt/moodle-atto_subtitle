@@ -39,7 +39,7 @@ function atto_subtitle_strings_for_js() {
         array('insert','cancel','audio','video','subtitle',
             'subtitleinstructions','audio_desc','video_desc','uploadprogress','uploadproblem',
             'confirmremovesubtitles','savesubtitles','removesubtitles','addnew',
-            'stepback','stepahead','playpause','now'), constants::M_COMPONENT);
+            'stepback','stepahead','playpause','now','actions','dialogactionsheader'), constants::M_COMPONENT);
 }
 
 /**
@@ -47,7 +47,7 @@ function atto_subtitle_strings_for_js() {
  * @return array of additional params to pass to javascript init function for this module.
  */
 function atto_subtitle_params_for_js($elementid, $options, $fpoptions) {
-	global $COURSE;
+	global $CFG, $COURSE, $OUTPUT;
 
 	$config = get_config('atto_subtitle');
 
@@ -59,11 +59,16 @@ function atto_subtitle_params_for_js($elementid, $options, $fpoptions) {
    // $params['insertmethod']=$config->insertmethod;
 
     //add icon to editor if the permissions and settings are ok
-     $params['disabled']=true;
+    $params['disabled']=true;
     $enablesubtitling = get_config('atto_subtitle','enablesubtitling');
     if($enablesubtitling && has_capability('atto/subtitle:visible', $coursecontext)){
         $params['disabled']=false;
     }
 
+    //templates
+    $tdata = new stdClass();
+    $tdata->imgpath = $CFG->wwwroot . '/lib/editor/atto/plugins/subtitle/pix/e/';
+    $params['templates_root'] = $OUTPUT->render_from_template('atto_subtitle/subtitlecontainer', $tdata);
+    $params['templates_dialog'] = $OUTPUT->render_from_template('atto_subtitle/subtitledialog', $tdata);
     return $params;
 }
