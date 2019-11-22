@@ -59,4 +59,4 @@ $string['playpause'] = 'Play/pause';
 $string['now'] = 'Now';
 $string['actions'] = 'Actions';
 $string['dialogactionsheader']='Actions';
-$string['dragdropsquare']='Tap to download captions VTT file. <br> Or drag and drop a vtt file over this square to upload captions.';
+$string['dragdropsquare']='Tap to download captions VTT file.<br>Or<br>Drag and drop a VTT file over this square to upload captions.';

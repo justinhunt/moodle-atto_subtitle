@@ -153,6 +153,7 @@ define(["jquery", "atto_subtitle/constants",
       },
 
       fetch_filename: function(url) {
+          url=encodeURIComponent(url);
           url = url.substring(0, (url.indexOf("#") == -1) ? url.length : url.indexOf("#"));
           url = url.substring(0, (url.indexOf("?") == -1) ? url.length : url.indexOf("?"));
           var filename = url.substring(url.lastIndexOf("/") + 1, url.length);

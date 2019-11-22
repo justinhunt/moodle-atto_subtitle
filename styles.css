@@ -639,7 +639,7 @@ button#poodllsubtitle_edcancel:hover,
 
 .subtitlepreviewplayer .btn.play{background-image: url([[pix:atto_subtitle|e/play-icon]]);}
 .subtitlepreviewplayer .btn.play.active {
-    background-image: url([[pix:atto_subtitle|e/pause-button]]);
+    background-image: url([[pix:atto_subtitle|e/pause-icon]]);
 }
 .subtitlepreviewplayer .btn.prev{
     background-image: url([[pix:atto_subtitle|e/prev-icon]]);
