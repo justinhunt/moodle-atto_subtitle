@@ -126,11 +126,19 @@ define(["jquery","atto_subtitle/constants", "atto_subtitle/vtthelper","atto_subt
           //editor button delete tile click event
           this.controls.container.on("click",constants.C_BUTTONDELETE,function(){
               result = confirm('Warning! This tile is going to be deleted!');
+              //we need to combine reset tile here to maintain it all, so its a bit messy.
+              //calling reset tile fails because the result arrives after the delete and the deleted item appears again
               if (result) {
-                that.restoreTile();
-                subtitleset.removeItem(that.currentindex);
-                that.syncFrom(that.currentindex);
-                previewhelper.updateLabel();
+                  var item = subtitleset.fetchItem(that.currentindex);
+                  var onend = function(tile){
+                      that.hideEditor();
+                      that.currentitemcontainer.append(tile);
+                      subtitleset.removeItem(that.currentindex);
+                      that.syncFrom(that.currentindex);
+                      previewhelper.updateLabel();
+                  };
+                  that.fetchNewTextTile(that.currentindex,item.start,item.end,item.part, onend);
+
               } else {
                   return;
               }

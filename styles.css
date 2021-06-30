@@ -693,7 +693,7 @@ button#poodllsubtitle_edcancel:hover,
 */
 
 .subtitlepreviewplayer.player-audio {
-    flex-direction: column;
+    /* flex-direction: column; */
 }
 
 .subtitlepreviewplayer.player-audio .bottom-box {
@@ -701,7 +701,8 @@ button#poodllsubtitle_edcancel:hover,
 }
 
 .subtitlepreviewplayer.player-audio .top-box {
-    height: auto!important;
+    /* height: auto!important; */
+    display: none;
 }
 
 .subtitlepreviewplayer.player-audio .top-box .poodllsubtitle_video {

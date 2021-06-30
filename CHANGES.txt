@@ -1,5 +1,9 @@
+Version 1.0.14 (Build 2021062900)
+-Layout fix for audio subtitles
+-Fixed for poor behaviour on delete tile
+
 Version 1.0.13 (Build 2019112101)
--fixed bad version number 
+-fixed bad version number
 
 Version 1.0.12 (Build 2019112100)
 -added missing pause button icon
